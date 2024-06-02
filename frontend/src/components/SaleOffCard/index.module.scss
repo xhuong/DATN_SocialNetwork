@@ -1,0 +1,34 @@
+@import "../../assets//styles/variables";
+
+.saleOff {
+  height: 100%;
+  border-radius: 8px;
+  position: relative;
+  background-image: linear-gradient(45deg, #a486dd, #e2beda);
+  .saleOffImg {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    zoom: 1.4;
+    right: 24px;
+    width: 120px;
+    margin-left: auto;
+  }
+  .saleOffTop {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+  }
+  .saleOffBot {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+  }
+  .saleOffTop span,
+  .saleOffBot span {
+    display: block;
+    color: $whiteColor;
+    font-size: 1.6rem;
+    text-transform: initial;
+  }
+}

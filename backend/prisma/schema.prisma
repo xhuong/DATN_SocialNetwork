@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "foreignKeys"
+}
+
+enum ERole {
+  ADMIN
+  USER
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value ERole  @default(USER)
+  User  User[]
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  name         String
+  user_name    String
+  password     String
+  phone_number String
+  address      String
+  role_id      Int
+  role         Role       @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Post         Post[]
+  Like         Like[]
+  Comment      Comment[]
+  followers    Follower[] @relation("user_followers")
+  following    Follower[] @relation("user_following")
+}
+
+model Post {
+  id      Int       @id @default(autoincrement())
+  title   String
+  user_id Int
+  user    User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Images  Images[]
+  Like    Like[]
+  Comment Comment[]
+}
+
+model Images {
+  id        Int    @id @default(autoincrement())
+  image_url String
+  post_id   Int
+  post      Post   @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Follower {
+  id          Int      @id @default(autoincrement())
+  created_at  DateTime
+  user_id     Int
+  user        User     @relation("user_followers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  follower_id Int
+  follower    User     @relation("user_following", fields: [follower_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Like {
+  id      Int  @id @default(autoincrement())
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  post_id Int
+  post    Post @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Comment {
+  id                Int      @id @default(autoincrement())
+  parent_comment_id Int?   
+  content           String
+  created_at        DateTime
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  post_id Int
+  post    Post @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+

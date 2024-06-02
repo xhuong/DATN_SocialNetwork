@@ -1,0 +1,69 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap");
+@import "react-toastify/dist/ReactToastify.css";
+@import "antd/dist/antd.min.css";
+@import "variables";
+
+:root {
+  --header-height: 60px;
+  --white-color: #ffffff;
+  --active-color: #31a24c;
+  --gray-light-color: #f0f2f5;
+  --gray-bg-color: #f0f2f5;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: $primaryFont;
+  font-size: 1.6rem;
+  height: calc(100vh - var(--header-height));
+  background-color: var(--gray-bg-color);
+}
+
+a,
+a:hover {
+  text-decoration: none;
+  color: $blackColor;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+ul {
+  margin-bottom: 0;
+}
+
+ul,
+ol li {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: 0;
+}
+
+p {
+  margin-bottom: unset;
+}
+
+input {
+  outline: none;
+  border: none;
+}

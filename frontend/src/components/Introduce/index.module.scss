@@ -1,0 +1,27 @@
+@import "../../assets/styles/variables";
+
+.introduce {
+  display: flex;
+  align-items: start;
+  column-gap: 16px;
+  .introduceIcon {
+    color: $purpleColor;
+    font-size: 32px;
+    display: inline-flex;
+    padding: 8px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    border: 1px solid $purpleColor;
+  }
+  .introduceContent {
+    .introduceHeading {
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+    .introduceParagraph {
+      font-weight: 400;
+      color: #6a6a6a;
+      font-size: 1.4rem;
+    }
+  }
+}

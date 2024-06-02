@@ -1,0 +1,48 @@
+.rightSide {
+  position: sticky;
+  top: 60px;
+  right: 0;
+  width: 320px;
+  max-width: 320px;
+  height: calc(100vh - var(--header-height));
+  max-height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 8px;
+    position: fixed;
+    right: 0;
+    top: 0;
+  }
+  &::-webkit-scrollbar-track {
+    border-radius: 16px;
+    background: #f1f1f1;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #d3d3d3;
+    border-radius: 16px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #d7d7d7;
+  }
+  .contactUser {
+    margin: 16px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .contactUserAction {
+      .searchUserIcon {
+        cursor: pointer;
+      }
+      .contactUserSetting {
+        cursor: pointer;
+        margin-left: 16px;
+      }
+    }
+  }
+
+  &:hover::-webkit-scrollbar {
+    display: block;
+  }
+}

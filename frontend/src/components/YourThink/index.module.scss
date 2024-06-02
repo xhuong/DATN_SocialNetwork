@@ -1,0 +1,59 @@
+.yourThink {
+  padding: 16px;
+  background-color: var(--white-color);
+  margin-bottom: 16px;
+  border-radius: 16px;
+
+  .yourThinkHeader {
+    display: flex;
+    column-gap: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px;
+    border-bottom-color: var(--gray-light-color);
+    border-bottom-style: solid;
+    margin-bottom: 16px;
+    .yourThinkImage {
+      height: 40px;
+      width: 40px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .yourThinkText {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background-color: var(--gray-light-color);
+      padding: 8px;
+      border-radius: 24px;
+      cursor: pointer;
+    }
+  }
+  .yourThinkFooter {
+    display: flex;
+    justify-content: space-around;
+    .yourThinkFooterAction {
+      display: flex;
+      column-gap: 16px;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all ease 0.2s;
+      .yourThinkFooterImage {
+        height: 32px;
+        width: 32px;
+      }
+      .yourThinkFooterText {
+        font-size: 1.4rem;
+      }
+      .yourThinkFooterImage,
+      .yourThinkFooterText {
+        cursor: pointer;
+      }
+
+      &:hover {
+        background-color: var(--gray-light-color);
+      }
+    }
+  }
+}

@@ -1,0 +1,111 @@
+@import "../../assets/styles/variables";
+
+.slider {
+  margin-top: $headerHeight;
+
+  .sliderItem {
+    position: relative;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: cover;
+    padding-top: 43%;
+    background-image: url("../../assets/images/banners/book_award.jpg");
+  }
+
+  .sliderContent {
+    position: absolute;
+    top: 20%;
+    left: 5%;
+  }
+
+  .sliderNameCollection {
+    font-size: 1.4rem;
+    color: $redColor;
+  }
+
+  .sliderHeading {
+    font-size: 6.5rem;
+    color: $blackColor;
+    margin: 0px 0px 4px;
+    font-weight: 600;
+  }
+
+  .sliderSubheading {
+    display: block;
+    font-style: italic;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 2rem;
+    color: #333c56;
+    margin-bottom: 15px;
+  }
+
+  // custom css react slick slider
+  :global {
+    .slick-prev,
+    .slick-next {
+      opacity: 0.3;
+      transition: opacity 0.6s;
+      background-color: transparent;
+      z-index: 1;
+      border-radius: 100%;
+      border: 1px solid $whiteColor;
+    }
+
+    .slick-prev:hover,
+    .slick-next:hover {
+      opacity: 1;
+    }
+
+    .slick-prev,
+    .slick-next {
+      top: unset;
+      bottom: 10px;
+      width: 50px;
+      height: 50px;
+    }
+
+    .slick-prev {
+      left: unset;
+      right: 100px;
+    }
+
+    .slick-next {
+      right: 40px;
+    }
+
+    .slick-prev::before,
+    .slick-next::before {
+      font-family: "Font Awesome 5 Brands";
+      color: $whiteColor;
+      background-color: transparent;
+    }
+
+    .slick-dots {
+      li {
+        width: 36px;
+        height: 14px;
+        border-radius: 2px;
+        cursor: default;
+      }
+      bottom: 6px;
+      background-image: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.001),
+        rgba(255, 255, 255, 0.5)
+      );
+      button {
+        width: 36px;
+        height: 6px;
+        padding: unset;
+      }
+      button:before {
+        content: "";
+        background-color: $whiteColor;
+        width: 36px;
+        height: 4px;
+        border-radius: 8px;
+      }
+    }
+  }
+}

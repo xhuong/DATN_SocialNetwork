@@ -1,0 +1,39 @@
+.userProfile {
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  column-gap: 16px;
+  border-radius: 8px;
+  .userProfileImage {
+    height: 40px;
+    width: 40px;
+  }
+  .rounded {
+    img {
+      border-radius: 50%;
+    }
+  }
+  .active {
+    position: relative;
+  }
+  .active::before {
+    content: "";
+    position: absolute;
+    display: block;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: var(--active-color);
+    border: 1px solid var(--white-color);
+    border-radius: 50%;
+  }
+  .userName {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  &:hover {
+    background-color: var(--gray-light-color);
+  }
+}
