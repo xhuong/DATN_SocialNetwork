@@ -12,6 +12,7 @@ import { PostService } from "./post.service";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { Response } from "express";
+import { GetPostsDto } from "./dto/get-posts.dto";
 
 @Controller("post")
 export class PostController {
@@ -27,9 +28,12 @@ export class PostController {
     return this.postService.findAll(response);
   }
 
-  @Get("/get-posts-by-user-id/:id")
-  getPostsByUserId(@Param("id") id: string, @Res() response: Response) {
-    return this.postService.getPostsByUserId(+id, response);
+  @Post("/get-posts-by-user-id")
+  getPostsByUserId(
+    @Body() getPostsDto: GetPostsDto,
+    @Res() response: Response,
+  ) {
+    return this.postService.getPostsByUserId(getPostsDto, response);
   }
 
   @Get(":id")

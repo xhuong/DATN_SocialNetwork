@@ -1,13 +1,19 @@
+import { useDispatch } from "react-redux";
 import styles from "./index.module.scss";
+import { openModal } from "@/redux/slices/modal";
 
 function YourThink() {
+  const dispatch = useDispatch();
   return (
     <div className={styles.yourThink}>
       <div className={styles.yourThinkHeader}>
         <div className={styles.yourThinkImage}>
           <img src={require("../../assets/images/users/girl.jpg")} alt="" />
         </div>
-        <div className={styles.yourThinkText}>
+        <div
+          className={styles.yourThinkText}
+          onClick={() => dispatch(openModal())}
+        >
           <span>Ấy ơi, bạn đang nghĩ gì thế?</span>
         </div>
       </div>

@@ -28,6 +28,35 @@ export class LikeService {
     }
   }
 
+  async dislike(dislikeDto: CreateLikeDto, response: Response) {
+    const { post_id, user_id } = dislikeDto;
+    try {
+      const data = await this.prisma.like.deleteMany({
+        where: {
+          post_id: {
+            equals: post_id,
+          },
+          user_id: {
+            equals: user_id,
+          },
+        },
+      });
+
+      return response.status(200).json({
+        status: 200,
+        message: `user ${user_id} liked ${post_id} successfully`,
+        result: {
+          data,
+        },
+      });
+    } catch (error) {
+      return {
+        status: 400,
+        message: `user ${user_id} liked ${post_id} failed`,
+      };
+    }
+  }
+
   findAll() {
     return `This action returns all like`;
   }

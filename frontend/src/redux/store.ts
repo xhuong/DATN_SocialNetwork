@@ -1,31 +1,28 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 
-import loadingSlice from "@/redux/slices/loading";
-import cartSlice from "@/redux/slices/cart";
-
-import { BookAPI } from "@/services/BookAPI";
-import { OrderAPI } from "@/services/OrderAPI";
-import { PublisherAPI } from "@/services/PublisherAPI";
-import { AuthorAPI } from "@/services/AuthorAPI";
+import { PostAPI } from "@/services/PostAPI";
+import { LikeAPI } from "@/services/LikeAPI";
+import { CommentAPI } from "@/services/CommentAPI";
+import { AuthenticationAPI } from "@/services/AuthenticationAPI";
+import modal from "@/redux/slices/modal";
 
 const rootReducer = combineReducers({
-  cart: cartSlice,
-  loading: loadingSlice,
-  [BookAPI.reducerPath]: BookAPI.reducer,
-  [OrderAPI.reducerPath]: OrderAPI.reducer,
-  [AuthorAPI.reducerPath]: AuthorAPI.reducer,
-  [PublisherAPI.reducerPath]: PublisherAPI.reducer,
+  modal: modal,
+  [AuthenticationAPI.reducerPath]: AuthenticationAPI.reducer,
+  [PostAPI.reducerPath]: PostAPI.reducer,
+  [LikeAPI.reducerPath]: LikeAPI.reducer,
+  [CommentAPI.reducerPath]: CommentAPI.reducer,
 });
 
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleWare) =>
     getDefaultMiddleWare()
-      .concat(BookAPI.middleware)
-      .concat(AuthorAPI.middleware)
-      .concat(PublisherAPI.middleware)
-      .concat(OrderAPI.middleware),
+      .concat(AuthenticationAPI.middleware)
+      .concat(PostAPI.middleware)
+      .concat(LikeAPI.middleware)
+      .concat(CommentAPI.middleware),
 });
 
 setupListeners(store.dispatch);

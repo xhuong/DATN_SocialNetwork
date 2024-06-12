@@ -1,6 +1,6 @@
 import LeftSide from "@/layouts/LeftSide";
 import RightSide from "@/layouts/RightSide";
-import MiddleSide from "../MiddleSide";
+import MiddleSide from "@/layouts/MiddleSide";
 
 import styles from "./index.module.scss";
 

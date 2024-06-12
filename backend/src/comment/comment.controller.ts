@@ -36,7 +36,7 @@ export class CommentController {
     @Body() updateCommentDto: UpdateCommentDto,
     @Res() response: Response,
   ) {
-    return this.commentService.update(+id, updateCommentDto);
+    return this.commentService.update(+id, updateCommentDto, response);
   }
 
   @Delete(":id")

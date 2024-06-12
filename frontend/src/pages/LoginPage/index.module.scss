@@ -1,37 +1,57 @@
 .loginPage {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  .loginForm {
-    width: 420px;
-    max-width: 420px;
-    .coverImage {
-      max-width: 240px;
-      margin: 0 auto;
+  .loginContainer {
+    width: 960px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .loginPageContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 24px;
+    min-height: 100vh;
+
+    .loginDescription {
+      flex: 1;
+      h2 {
+        font-size: 4.8rem;
+        font-weight: bold;
+      }
+      p {
+        font-size: 2.4rem;
+      }
     }
-    .loginTitle {
-      position: relative;
-      text-align: center;
-      font-weight: 600;
-      padding-top: 1rem;
-      line-height: 30px;
-      font-size: 2.4rem;
-      margin-bottom: 3.5rem;
-    }
-    .loginSubtitle {
-      font-size: 5.5rem;
-      font-style: italic;
-      font-weight: 600;
-      font-family: initial;
-      position: absolute;
-      color: #657382;
-      width: 100%;
-      opacity: 0.1;
-      top: 0;
-      left: 50%;
-      transform: translate(-50%, 25%);
-      z-index: 1;
+    .loginForm {
+      width: 420px;
+      max-width: 420px;
+      flex-shrink: 0;
+      .coverImage {
+        max-width: 240px;
+        margin: 0 auto;
+      }
+      .loginTitle {
+        position: relative;
+        text-align: center;
+        font-weight: 600;
+        padding-top: 1rem;
+        line-height: 30px;
+        font-size: 2.4rem;
+        margin-bottom: 3.5rem;
+      }
+      .loginSubtitle {
+        font-size: 5.5rem;
+        font-style: italic;
+        font-weight: 600;
+        font-family: initial;
+        position: absolute;
+        color: #657382;
+        width: 100%;
+        opacity: 0.1;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, 25%);
+        z-index: 1;
+      }
     }
   }
 }

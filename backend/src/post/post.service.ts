@@ -3,6 +3,8 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Response } from "express";
+import { buildNestedComments } from "src/utils";
+import { GetPostsDto } from "./dto/get-posts.dto";
 
 @Injectable()
 export class PostService {
@@ -52,14 +54,19 @@ export class PostService {
     return `This action returns a #${id} post`;
   }
 
-  async getPostsByUserId(id: number, response: Response) {
+  async getPostsByUserId(getPostDto: GetPostsDto, res: Response) {
     try {
-      const data = await this.prisma.post.findMany({
+      const response = await this.prisma.post.findMany({
         where: {
-          user_id: id,
+          user_id: getPostDto.id_user,
         },
         include: {
-          Comment: true,
+          user: true,
+          Comment: {
+            include: {
+              user: true,
+            },
+          },
           Images: true,
           Like: {
             include: {
@@ -68,17 +75,25 @@ export class PostService {
           },
         },
       });
-      return response.status(200).json({
+
+      const cloneRes = response.map((post) => ({
+        ...post,
+        isLiked: post?.Like.some(
+          (like) => like.user_id === getPostDto.id_user_viewing,
+        ),
+      }));
+
+      return res.status(200).json({
         status: 200,
-        message: `Get all posts with userId = ${id} successfully`,
+        message: `Get all posts with userId = ${getPostDto.id_user} successfully`,
         result: {
-          data,
+          data: cloneRes,
         },
       });
     } catch {
       return {
         status: 400,
-        message: `Get all posts with userId = ${id} failed`,
+        message: `Get all posts with userId = ${getPostDto.id_user} failed`,
       };
     }
   }

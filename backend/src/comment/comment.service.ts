@@ -54,8 +54,31 @@ export class CommentService {
     return `This action returns a #${id} comment`;
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(
+    id: number,
+    updateCommentDto: UpdateCommentDto,
+    response: Response,
+  ) {
+    try {
+      const data = await this.prisma.comment.update({
+        data: updateCommentDto,
+        where: {
+          id,
+        },
+      });
+      return response.status(200).json({
+        status: 200,
+        message: "Update comment successfully",
+        result: {
+          data,
+        },
+      });
+    } catch (error) {
+      return {
+        status: 400,
+        message: "Update comment failed",
+      };
+    }
   }
 
   remove(id: number) {

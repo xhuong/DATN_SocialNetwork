@@ -7,19 +7,26 @@ import {
   Param,
   Delete,
   Res,
+  UseGuards,
 } from "@nestjs/common";
 import { LikeService } from "./like.service";
 import { CreateLikeDto } from "./dto/create-like.dto";
 import { UpdateLikeDto } from "./dto/update-like.dto";
 import { Response } from "express";
+import { AuthGuard } from "src/auth/auth.guard";
 
 @Controller("like")
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
-
+  // @UseGuards(AuthGuard)
   @Post()
   create(@Body() createLikeDto: CreateLikeDto, @Res() response: Response) {
     return this.likeService.create(createLikeDto, response);
+  }
+
+  @Post("/dislike")
+  dislikeAPost(@Body() dislikeDto: CreateLikeDto, @Res() response: Response) {
+    return this.likeService.dislike(dislikeDto, response);
   }
 
   @Get()
