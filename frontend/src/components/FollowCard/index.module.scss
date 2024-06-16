@@ -1,0 +1,25 @@
+.followCard {
+  padding: 8px;
+  min-width: 180px;
+  max-width: 240px;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  margin-bottom: 16px;
+  .followCardImg {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px;
+    img {
+      margin: 0 auto;
+    }
+    margin-bottom: 8px;
+  }
+  .followCardName {
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  .followCardAddress {
+    font-size: 1.2rem;
+  }
+}

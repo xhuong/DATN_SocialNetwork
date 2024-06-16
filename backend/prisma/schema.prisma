@@ -21,19 +21,22 @@ model Role {
 }
 
 model User {
-  id           Int        @id @default(autoincrement())
-  name         String
-  user_name    String
-  password     String
-  phone_number String
-  address      String
-  role_id      Int
-  role         Role       @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Post         Post[]
-  Like         Like[]
-  Comment      Comment[]
-  followers    Follower[] @relation("user_followers")
-  following    Follower[] @relation("user_following")
+  id            Int            @id @default(autoincrement())
+  name          String
+  user_name     String
+  password      String
+  phone_number  String
+  address       String
+  image_profile String         @default("http://res.cloudinary.com/dlpme7dga/image/upload/v1718441482/asxhixp3yhyeswdhvg3q.png")
+  role_id       Int
+  role          Role           @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Post          Post[]
+  Like          Like[]
+  Comment       Comment[]
+  followers     Follower[]     @relation("user_followers")
+  following     Follower[]     @relation("user_following")
+  Participants  Participants[]
+  Message       Message[]
 }
 
 model Post {
@@ -57,7 +60,7 @@ model Images {
 
 model Follower {
   id          Int      @id @default(autoincrement())
-  created_at  DateTime
+  created_at  DateTime @default(now())
   user_id     Int
   user        User     @relation("user_followers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   follower_id Int
@@ -81,4 +84,30 @@ model Comment {
   user              User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   post_id           Int
   post              Post     @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Conversation {
+  id                  Int            @id @default(autoincrement())
+  name                String
+  last_read_timestamp DateTime
+  Participants        Participants[]
+  Message             Message[]
+}
+
+model Participants {
+  id              Int          @id @default(autoincrement())
+  conversation_id Int
+  conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id         Int
+  user            User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Message {
+  id              Int          @id @default(autoincrement())
+  send_user_id    Int
+  user            User         @relation(fields: [send_user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  message_text    String
+  send_datetime   DateTime
+  conversation_id Int
+  Conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

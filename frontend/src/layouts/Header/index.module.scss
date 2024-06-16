@@ -69,19 +69,80 @@
       column-gap: 16px;
       .headerProfileItem {
         position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 40px;
-        width: 40px;
-        border-radius: 100%;
-        cursor: pointer;
         svg {
           font-size: 24px;
         }
-        overflow: hidden;
-        background-color: var(--gray-light-color);
+        .headerIcon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 40px;
+          width: 40px;
+          border-radius: 100%;
+          overflow: hidden;
+          cursor: pointer;
+          background-color: var(--gray-light-color);
+        }
+        .headerCard {
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          width: 360px;
+          display: none;
+          padding: 16px 8px;
+          border-radius: 8px;
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+          background-color: #fff;
+          animation: fadeIn 0.2s ease-in;
+          .headerCardInfo {
+          }
+          .headerCardInfoWrapper {
+            margin-bottom: 16px;
+          }
+          .headerCardInfoList {
+          }
+          .headerCardInfoItem {
+            display: flex;
+            align-items: center;
+            column-gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+          }
+          .headerCardInfoItem:hover {
+            cursor: pointer;
+            background-color: var(--gray-light-color);
+          }
+          .headerCardInfoItem:not(:last-child) {
+            margin-bottom: 4px;
+          }
+          .headerCardInfoIcon {
+            display: inline-flex;
+          }
+          &::before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0;
+            bottom: 100%;
+            width: 100%;
+            height: 8px;
+          }
+        }
+      }
+      .headerProfileItem:last-child:hover {
+        .headerCard {
+          display: block;
+        }
       }
     }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

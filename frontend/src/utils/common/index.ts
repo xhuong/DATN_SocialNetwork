@@ -9,11 +9,8 @@ export interface ILoginPayloadFE {
 export interface IUserBE {
   id: number;
   name: string;
-  user_name: string;
-  password: string;
-  phone_number: string;
   address: string;
-  role_id: number;
+  image_profile: string;
 }
 
 export interface ICommentBE {
@@ -41,33 +38,15 @@ export interface IPostBE {
   created_date: string;
   user: IUserBE;
   Comment: ICommentBE[] | [];
-  Images: string[] | [];
+  Images: IImageBE[] | [];
   Like: ILikeBE[] | [];
   isLiked: boolean;
 }
 
-export interface IAuthor {
+export interface IImageBE {
   id: number;
-  name: string;
-}
-export interface IPublisher {
-  id: number;
-  name: string;
-}
-
-export interface IBookBE {
-  id: number;
-  isbn: string;
-  name: string;
-  price: number;
-  available_quantity: number;
-  year_of_publication: number;
   image_url: string;
-  author_id: number;
-  author: IAuthor;
-  publisher_id: number;
-  publisher: IPublisher;
-  date_added: Date;
+  post_id: number;
 }
 
 export interface IPostFE {
@@ -78,7 +57,8 @@ export interface IPostFE {
   };
   createdDate: string;
   title: string;
-  images: string[];
+  // images: string[];
+  images: IImageFE[];
   likeCount: number;
   commentCount: number;
   shareCount: number;
@@ -200,21 +180,35 @@ const mapCommentBEToCommentUI = (comments: ICommentBE[]) => {
   return commentsUI;
 };
 
+interface IImageFE {
+  id: number;
+  image_url: string;
+  post_id: number;
+}
+
+const mapImageBEToImageFE = (images: IImageBE[]): IImageFE[] => {
+  return images.map((image) => ({
+    id: image.id,
+    image_url: image.image_url,
+    post_id: image.post_id,
+  }));
+};
+
 export const mapPostListBEToPostListUI = (posts: IPostBE[]): IPostFE[] => {
   return posts.map((post) => ({
     id: post.id,
-    commentCount: post.Comment?.length,
-    // comments: mapCommentBEToCommentUI(post.Comment),
-    comments: mapCommentBEToCommentUI(nestComments(post.Comment)),
-    createdDate: post.created_date,
-    images: post.Images,
-    likeCount: post.Like?.length || 0,
-    shareCount: 0,
     title: post.title,
     user: {
       id: post.user.id,
       userDisplayName: post.user.name,
     },
+    // comments: mapCommentBEToCommentUI(post.Comment),
+    comments: mapCommentBEToCommentUI(nestComments(post.Comment)),
+    createdDate: post.created_date,
+    images: mapImageBEToImageFE(post.Images),
+    commentCount: post.Comment?.length,
+    likeCount: post.Like?.length || 0,
+    shareCount: 0,
     isLiked: post.isLiked,
   }));
 };

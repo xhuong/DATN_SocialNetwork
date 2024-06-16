@@ -1,11 +1,32 @@
-import { Injectable } from '@nestjs/common';
-import { CreateImageDto } from './dto/create-image.dto';
-import { UpdateImageDto } from './dto/update-image.dto';
+import { Injectable } from "@nestjs/common";
+import { CreateImageDto } from "./dto/create-image.dto";
+import { UpdateImageDto } from "./dto/update-image.dto";
+import { PrismaService } from "src/prisma/prisma.service";
+import { Response } from "express";
 
 @Injectable()
 export class ImagesService {
-  create(createImageDto: CreateImageDto) {
-    return 'This action adds a new image';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createImageDtos: CreateImageDto[], response: Response) {
+    try {
+      const data = await this.prisma.images.createMany({
+        data: createImageDtos,
+        skipDuplicates: true,
+      });
+      return response.status(200).json({
+        status: 200,
+        message: "Added image(s) to database successfully",
+        result: {
+          data,
+        },
+      });
+    } catch (error) {
+      return {
+        status: 400,
+        message: "Added image(s) to database failed",
+      };
+    }
   }
 
   findAll() {

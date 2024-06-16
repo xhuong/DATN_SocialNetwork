@@ -5,6 +5,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { Response } from "express";
 import { buildNestedComments } from "src/utils";
 import { GetPostsDto } from "./dto/get-posts.dto";
+import { userInfo } from "os";
 
 @Injectable()
 export class PostService {
@@ -54,40 +55,71 @@ export class PostService {
     return `This action returns a #${id} post`;
   }
 
+  // ---  get posts of users that current user followed them ---
+
+  // give the current_user_id for this api
+  // find all user that current user is followed => ids
+  // get all posts of user list from ids => return
+
   async getPostsByUserId(getPostDto: GetPostsDto, res: Response) {
     try {
-      const response = await this.prisma.post.findMany({
+      const followedUserIds = await this.prisma.follower.findMany({
         where: {
-          user_id: getPostDto.id_user,
+          follower_id: getPostDto.id_user,
         },
+        select: {
+          user_id: true,
+        },
+      });
+
+      const ids = followedUserIds.map((obj) => obj.user_id);
+
+      const selectUser = {
+        id: true,
+        name: true,
+        address: true,
+        image_profile: true,
+      };
+
+      const posts = await this.prisma.post.findMany({
+        where: {
+          user_id: {
+            in: [...ids, getPostDto.id_user],
+          },
+        },
+        orderBy: { created_date: "desc" },
         include: {
-          user: true,
+          user: {
+            select: selectUser,
+          },
           Comment: {
             include: {
-              user: true,
+              user: {
+                select: selectUser,
+              },
             },
           },
           Images: true,
           Like: {
             include: {
-              user: true,
+              user: {
+                select: selectUser,
+              },
             },
           },
         },
       });
 
-      const cloneRes = response.map((post) => ({
+      const clonePosts = posts.map((post) => ({
         ...post,
-        isLiked: post?.Like.some(
-          (like) => like.user_id === getPostDto.id_user_viewing,
-        ),
+        isLiked: post?.Like.some((like) => like.user_id === getPostDto.id_user),
       }));
 
       return res.status(200).json({
         status: 200,
         message: `Get all posts with userId = ${getPostDto.id_user} successfully`,
         result: {
-          data: cloneRes,
+          data: clonePosts,
         },
       });
     } catch {

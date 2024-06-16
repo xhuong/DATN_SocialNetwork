@@ -1,40 +1,46 @@
-import { useEffect, useState, createContext } from "react";
+import React, { useEffect, useState, createContext } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
-import { IPostFE, mapPostListBEToPostListUI } from "@/utils/common";
+import { IPostFE, IUserBE, mapPostListBEToPostListUI } from "@/utils/common";
 
 import {
   useGetPostListByUserIdQuery,
   useLazyGetPostListByUserIdQuery,
 } from "@/services/PostAPI";
 
-import YourThink from "@/components/YourThink";
-import Post from "@/components/Post";
 import {
   useDislikeAPostMutation,
   useLazyLikeAPostQuery,
 } from "@/services/LikeAPI";
 
-import styles from "./index.module.scss";
 import {
   IAddNewCommentDto,
   useLazyAddNewCommentQuery,
 } from "@/services/CommentAPI";
-import { getUserInfo } from "@/utils/auth";
-import { IUserInfoBE } from "@/services/AuthenticationAPI";
+import { defaultUserInfo, getUserInfo } from "@/utils/auth";
+
 import CreatePostModal from "@/components/CreatePostModal";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
+import YourThink from "@/components/YourThink";
+import Post from "@/components/Post";
+
+import FollowCardList from "@/layouts/FollowCardList";
+
+import styles from "./index.module.scss";
+import { toast } from "react-toastify";
 
 export interface IPostListProvider {
   handleLikeAPost: (userId: number, postId: number) => void;
   handleDislikeAPost: (userId: number, postId: number) => void;
   handleComment: (comment: IAddNewCommentDto) => void;
+  userInfo: IUserBE;
 }
 
 export const PostListContext = createContext<IPostListProvider>({
   handleLikeAPost: (userId: number, postId: number) => {},
   handleDislikeAPost: (userId: number, postId: number) => {},
   handleComment: (comment: IAddNewCommentDto) => {},
+  userInfo: defaultUserInfo,
 });
 
 function MiddleSide() {
@@ -43,54 +49,45 @@ function MiddleSide() {
     (state: RootState) => state?.modal.isShow
   );
 
-  const userInfo: IUserInfoBE | null = getUserInfo();
+  const userInfo: IUserBE | null = getUserInfo();
 
-  const { data, isSuccess } = useGetPostListByUserIdQuery(
-    { id_user: 2, id_user_viewing: userInfo?.id || 0 },
-    { refetchOnMountOrArgChange: false }
-  );
-
-  const [getPostList] = useLazyGetPostListByUserIdQuery({
-    refetchOnFocus: false,
+  const { data, isSuccess } = useGetPostListByUserIdQuery({
+    id_user: userInfo.id,
   });
 
-  const [likeAPost] = useLazyLikeAPostQuery({
-    refetchOnFocus: false,
-  });
+  const [getPostList] = useLazyGetPostListByUserIdQuery();
 
-  const [dislikeAPost] = useDislikeAPostMutation({});
+  const [likeAPost] = useLazyLikeAPostQuery();
 
-  const [addNewComment] = useLazyAddNewCommentQuery({
-    refetchOnFocus: false,
-  });
+  const [dislikeAPost] = useDislikeAPostMutation();
+
+  const [addNewComment] = useLazyAddNewCommentQuery();
 
   const handleLikeAPost = (userId: number, postId: number) => {
     if (userId && postId) {
       likeAPost({ post_id: postId, user_id: userId });
-      getPostList({
-        id_user: 2,
-        id_user_viewing: userInfo?.id || 0,
-      });
+      getPostList({ id_user: userInfo.id });
     }
   };
 
   const handleDislikeAPost = (userId: number, postId: number) => {
     if (userId && postId) {
       dislikeAPost({ post_id: postId, user_id: userId });
-      getPostList({
-        id_user: 2,
-        id_user_viewing: userInfo?.id || 0,
-      });
+      getPostList({ id_user: userInfo.id });
     }
   };
 
   const handleComment = (comment: IAddNewCommentDto) => {
     addNewComment(comment);
-    getPostList({ id_user: 2, id_user_viewing: userInfo?.id || 0 });
+    getPostList({ id_user: userInfo.id });
   };
+
   const onCreatePostSuccess = () => {
-    console.log("success");
-    getPostList({ id_user: 2, id_user_viewing: userInfo?.id || 0 });
+    toast.error("Create a new post successfully ✨", {
+      autoClose: 2000,
+      theme: "light",
+    });
+    getPostList({ id_user: userInfo.id });
   };
 
   useEffect(() => {
@@ -105,15 +102,21 @@ function MiddleSide() {
     handleLikeAPost,
     handleDislikeAPost,
     handleComment,
+    userInfo,
   };
 
   return (
     <PostListContext.Provider value={{ ...defaultValue }}>
       <div className={styles.middleSide}>
         <YourThink />
-        {postList?.map((post) => (
-          <Post post={post} key={post?.id} />
-        ))}
+        <FollowCardList />
+        {postList?.map((post) => {
+          return (
+            <React.Fragment key={post.id}>
+              <Post post={post} />
+            </React.Fragment>
+          );
+        })}
       </div>
       <CreatePostModal
         isShow={isShowCreatePostModal}

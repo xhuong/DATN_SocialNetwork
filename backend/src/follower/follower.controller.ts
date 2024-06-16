@@ -1,34 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { FollowerService } from './follower.service';
-import { CreateFollowerDto } from './dto/create-follower.dto';
-import { UpdateFollowerDto } from './dto/update-follower.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Res,
+} from "@nestjs/common";
+import { FollowerService } from "./follower.service";
+import { CreateFollowerDto } from "./dto/create-follower.dto";
+import { Response } from "express";
+import { UnfollowUserDto } from "./dto/unfollow-user.dto";
 
-@Controller('follower')
+@Controller("follower")
 export class FollowerController {
   constructor(private readonly followerService: FollowerService) {}
 
   @Post()
-  create(@Body() createFollowerDto: CreateFollowerDto) {
-    return this.followerService.create(createFollowerDto);
+  create(
+    @Body() createFollowerDto: CreateFollowerDto,
+    @Res() response: Response,
+  ) {
+    return this.followerService.followUser(createFollowerDto, response);
   }
 
-  @Get()
-  findAll() {
-    return this.followerService.findAll();
+  @Get("get-follower-users/:id")
+  findAllFollowingUsers(@Param("id") id: string, @Res() response: Response) {
+    return this.followerService.findAllFollowingUsers(+id, response);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.followerService.findOne(+id);
+  @Get("get-not-following-users/:id")
+  getAllNotFollowingUsers(@Param("id") id: string, @Res() response: Response) {
+    return this.followerService.getAllNotFollowingUsers(+id, response);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFollowerDto: UpdateFollowerDto) {
-    return this.followerService.update(+id, updateFollowerDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.followerService.remove(+id);
+  @Delete("unfollow-user")
+  unfollowUser(
+    @Body() unFollowUserDto: UnfollowUserDto,
+    @Res() response: Response,
+  ) {
+    return this.followerService.unFollowUser(unFollowUserDto, response);
   }
 }

@@ -22,12 +22,7 @@ function RegisterPage() {
               Social Network
               <span className={styles.registerSubtitle}>Social Network</span>
             </h2>
-            <Form
-              layout="vertical"
-              onFinish={(values) => {
-                console.log(values);
-              }}
-            >
+            <Form layout="vertical" onFinish={(values) => {}}>
               <Form.Item
                 label="Your full name"
                 name="fullName"

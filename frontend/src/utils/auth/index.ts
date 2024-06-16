@@ -1,5 +1,5 @@
 // src/utils/auth.js
-import { IUserInfoBE } from "@/services/AuthenticationAPI";
+import { IUserBE } from "@/utils/common";
 import { jwtDecode } from "jwt-decode";
 
 export const isTokenValid = (token: string | null): boolean => {
@@ -19,19 +19,23 @@ export const getToken = () => {
   return localStorage.getItem("access_token");
 };
 
-const defaultUserInfo: IUserInfoBE = {
+export const defaultUserInfo: IUserBE = {
   id: 0,
-  address: "",
   name: "",
-  role_id: 0,
-  user_name: "",
+  address: "",
+  image_profile: "",
 };
 
-export const getUserInfo = (): IUserInfoBE => {
+export const getUserInfo = (): IUserBE => {
   const userInfo = localStorage.getItem("user_info");
   if (userInfo) {
-    return JSON.parse(userInfo) as IUserInfoBE;
+    return JSON.parse(userInfo) as IUserBE;
   } else {
     return defaultUserInfo;
   }
+};
+
+export const logOut = () => {
+  localStorage.removeItem("user_info");
+  localStorage.removeItem("access_token");
 };

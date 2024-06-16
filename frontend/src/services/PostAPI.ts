@@ -37,7 +37,6 @@ export interface IPayloadSearchBookDto {
 
 export interface IPayloadGetPostsDto {
   id_user: number;
-  id_user_viewing: number;
 }
 
 export interface IPayloadCreatePostsDto {
@@ -53,7 +52,6 @@ export const PostAPI = createApi({
   endpoints: (builder) => ({
     getPostListByUserId: builder.query<IPostsTypes, IPayloadGetPostsDto>({
       query: (payload) => {
-        console.log("payload", payload);
         return {
           url: `${prefix}/get-posts-by-user-id`,
           method: "POST",

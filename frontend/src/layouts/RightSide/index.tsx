@@ -1,19 +1,46 @@
+import { useEffect, useState } from "react";
+
 import UserProfile from "@/components/UserProfile";
 
 import { BsThreeDots } from "react-icons/bs";
 import { IoSearchOutline } from "react-icons/io5";
 
-import girl from "@/assets/images/users/girl.jpg";
 import defaultProfileImage from "@/assets/images/users/default.png";
 
-import { IUserInfoBE } from "@/services/AuthenticationAPI";
-
 import { getUserInfo } from "@/utils/auth";
+import { IUserBE } from "@/utils/common";
 
+import { useLazyGetFollowerUsersQuery } from "@/services/FollowAPI";
+
+import {
+  IFollowUserFEOmitAddress,
+  mapUserFollowBEToUserFollowFEWithouAddress,
+} from "@/utils/follow";
 import styles from "./index.module.scss";
+import ChatWindow from "@/components/Chat";
 
 function RightSide() {
-  const userInfo: IUserInfoBE = getUserInfo();
+  const userInfo: IUserBE = getUserInfo();
+  const [getFollowerUsers, { data, isSuccess }] =
+    useLazyGetFollowerUsersQuery();
+  const [followers, setFollowers] = useState<IFollowUserFEOmitAddress[]>([]);
+
+  useEffect(() => {
+    if (userInfo.id) {
+      getFollowerUsers({ id: userInfo.id });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (data && isSuccess) {
+      const convertedData = mapUserFollowBEToUserFollowFEWithouAddress(
+        data.result.data
+      );
+      setFollowers(convertedData);
+    }
+  }, [data]);
+
+  const openChat = () => {};
 
   return (
     <div className={styles.rightSide}>
@@ -34,14 +61,16 @@ function RightSide() {
         </span>
       </div>
       <ul>
-        <li>
-          <UserProfile
-            userDisplayName={userInfo.name}
-            isRounded
-            image={girl}
-            isActive
-          />
-        </li>
+        {followers.map((user) => (
+          <li onClick={openChat}>
+            <UserProfile
+              userDisplayName={user.name}
+              isRounded
+              image={user.imageUrl}
+              isActive
+            />
+          </li>
+        ))}
       </ul>
     </div>
   );

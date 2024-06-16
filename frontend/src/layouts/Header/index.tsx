@@ -1,16 +1,31 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import { IoHomeOutline } from "react-icons/io5";
-import { LuMessageCircle } from "react-icons/lu";
+import {
+  IoSettingsOutline,
+  IoNotificationsOutline,
+  IoHomeOutline,
+} from "react-icons/io5";
+import { LuMessageCircle, LuLogOut } from "react-icons/lu";
 import { MdOndemandVideo, MdGroups } from "react-icons/md";
-import { IoSettingsOutline } from "react-icons/io5";
 import { AiOutlineMessage } from "react-icons/ai";
-import { IoNotificationsOutline } from "react-icons/io5";
 import { IoIosSearch } from "react-icons/io";
+import { AiOutlineSetting } from "react-icons/ai";
+
+import { logOut } from "@/utils/auth";
+
+import UserProfile from "@/components/UserProfile";
+
+import girl from "@/assets/images/users/girl.jpg";
 
 import styles from "./index.module.scss";
 
 export default function Header() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logOut();
+    navigate("/login");
+  };
+
   return (
     <div className={styles.header}>
       <div className={styles.headerLeft}>
@@ -54,18 +69,51 @@ export default function Header() {
       <div className={styles.headerProfile}>
         <ul className={styles.headerProfileList}>
           <li className={styles.headerProfileItem}>
-            <AiOutlineMessage />
+            <div className={styles.headerIcon}>
+              <AiOutlineMessage />
+            </div>
           </li>
           <li className={styles.headerProfileItem}>
-            <IoNotificationsOutline />
+            <div className={styles.headerIcon}>
+              <IoNotificationsOutline />
+            </div>
           </li>
           <li className={styles.headerProfileItem}>
-            <Link to="/profile">
+            <div className={styles.headerIcon}>
               <img
                 src={require("../../assets/images/users/default.png")}
                 alt=""
               />
-            </Link>
+            </div>
+            <div className={styles.headerCard}>
+              <div className={styles.headerCardInfo}>
+                <div className={styles.headerCardInfoWrapper}>
+                  <UserProfile
+                    image={girl}
+                    userDisplayName="Xuân Hoàng"
+                    isRounded
+                    bgGray
+                  />
+                </div>
+                <ul className={styles.headerCardInfoList}>
+                  <li className={styles.headerCardInfoItem}>
+                    <span className={styles.headerCardInfoIcon}>
+                      <AiOutlineSetting />
+                    </span>
+                    <p>Cài đặt</p>
+                  </li>
+                  <li
+                    className={styles.headerCardInfoItem}
+                    onClick={handleLogout}
+                  >
+                    <span className={styles.headerCardInfoIcon}>
+                      <LuLogOut />
+                    </span>
+                    <p>Đăng xuất</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </li>
         </ul>
       </div>

@@ -6,11 +6,16 @@ type Props = {
   btnSize?: string;
   isRounded?: boolean;
   isFullWidth?: boolean;
+  isNonePadding?: boolean;
   mt12?: boolean;
 };
 const Button = styled(AntButton)`
   height: unset;
   padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 4px;
   ${(props: Props) =>
     props.btnType === "primary" &&
     `
@@ -40,6 +45,8 @@ const Button = styled(AntButton)`
     background-color: #a487db;
   }`}
 
+  
+
   ${(props) =>
     props.isRounded &&
     `
@@ -55,10 +62,7 @@ const Button = styled(AntButton)`
     `
    margin-top: 12px;
   `}
-
-  svg {
-    margin-left: 8px;
-  }
+  ${(props) => props.isNonePadding && `padding: 4px`}
 `;
 
 export default Button;

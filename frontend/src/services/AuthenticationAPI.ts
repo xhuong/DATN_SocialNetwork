@@ -1,11 +1,8 @@
 import { IUserBE } from "@/utils/common";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export interface IUserInfoBE
-  extends Omit<IUserBE, "password" | "phone_number"> {}
-
 export interface IAuthenticationType {
-  userInfo: IUserInfoBE;
+  userInfo: IUserBE;
   access_token: string;
 }
 

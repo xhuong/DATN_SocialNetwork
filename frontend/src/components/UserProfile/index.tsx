@@ -6,6 +6,7 @@ interface IUserProfilePropsType {
   isRounded?: boolean;
   userDisplayName: string;
   isActive?: boolean;
+  bgGray?: boolean;
 }
 
 function UserProfile({
@@ -13,15 +14,17 @@ function UserProfile({
   image,
   userDisplayName,
   isActive,
+  bgGray,
 }: IUserProfilePropsType) {
   const navigate = useNavigate();
   return (
-    <div className={styles.userProfile}>
+    <div className={`${styles.userProfile} ${bgGray ? styles.bgGray : ""}`}>
       <div
         className={`
         ${styles.userProfileImage} 
         ${isRounded ? styles.rounded : ""} 
         ${isActive ? styles.active : ""}
+        
         `}
       >
         <img src={image} alt="" />

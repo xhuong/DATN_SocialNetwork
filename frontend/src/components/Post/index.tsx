@@ -44,6 +44,7 @@ function Post({ post }: { post: IPostFE }) {
     handleLikeAPost,
     handleDislikeAPost,
     handleComment,
+    userInfo,
   }: IPostListProvider = useContext(PostListContext);
 
   const [replyComment, setReplyComment] = useState<ICommentFE | null>();
@@ -107,18 +108,15 @@ function Post({ post }: { post: IPostFE }) {
         </Row> */}
 
           {/* user upload 1 image  */}
-          {/* {images?.map((image) => ( */}
-          <Row gutter={[8, 8]} className={styles.postImages}>
-            <Col xl={24} md={12}>
-              <div className={styles.postImageItem}>
-                <img
-                  src={require("../../assets/images/pictures/bird.jpg")}
-                  alt=""
-                />
-              </div>
-            </Col>
-          </Row>
-          {/* ))} */}
+          {images?.map((image) => (
+            <Row gutter={[8, 8]} className={styles.postImages} key={image.id}>
+              <Col xl={24} md={12}>
+                <div className={styles.postImageItem}>
+                  <img src={image.image_url} alt="" />
+                </div>
+              </Col>
+            </Row>
+          ))}
         </div>
         <div className={styles.postFooter}>
           <div className={styles.postFooterInfo}>
@@ -146,7 +144,9 @@ function Post({ post }: { post: IPostFE }) {
               <div
                 className={styles.postFooterActionItem}
                 onClick={() => {
-                  isLiked ? handleDislikeAPost(2, id) : handleLikeAPost(2, id);
+                  isLiked
+                    ? handleDislikeAPost(userInfo?.id, id)
+                    : handleLikeAPost(userInfo?.id, id);
                 }}
               >
                 <span>

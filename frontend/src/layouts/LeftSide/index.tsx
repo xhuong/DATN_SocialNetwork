@@ -8,12 +8,13 @@ import video from "@/assets/images/leftside/video.png";
 import saved from "@/assets/images/leftside/saved.png";
 import userGroup from "@/assets/images/leftside/group_user.png";
 
-import styles from "./index.module.scss";
-import { IUserInfoBE } from "@/services/AuthenticationAPI";
 import { getUserInfo } from "@/utils/auth";
+import { IUserBE } from "@/utils/common";
+
+import styles from "./index.module.scss";
 
 function LeftSide() {
-  const userInfo: IUserInfoBE = getUserInfo();
+  const userInfo: IUserBE = getUserInfo();
 
   return (
     <div className={styles.leftSide}>

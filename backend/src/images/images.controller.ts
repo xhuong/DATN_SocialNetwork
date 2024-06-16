@@ -6,18 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from "@nestjs/common";
 import { ImagesService } from "./images.service";
 import { CreateImageDto } from "./dto/create-image.dto";
 import { UpdateImageDto } from "./dto/update-image.dto";
+import { Response } from "express";
 
 @Controller("images")
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
   @Post()
-  create(@Body() createImageDto: CreateImageDto) {
-    return this.imagesService.create(createImageDto);
+  create(@Body() createImageDtos: CreateImageDto[], @Res() response: Response) {
+    return this.imagesService.create(createImageDtos, response);
   }
 
   @Get()

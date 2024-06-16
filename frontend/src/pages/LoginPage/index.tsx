@@ -13,10 +13,13 @@ import { getToken, isTokenValid } from "@/utils/auth";
 import { ILoginPayloadFE, mapLoginPayloadFEToBE } from "@/utils/common";
 
 import styles from "./index.module.scss";
+import { useDispatch } from "react-redux";
+import { hideLoading, showLoading } from "@/redux/slices/loading";
 
 function LoginPage() {
   const navigate = useNavigate();
   const [login] = useLazyLoginQuery();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const accessToken = getToken();
@@ -30,6 +33,7 @@ function LoginPage() {
 
   const handleSubmit = async (loginInfo: ILoginPayloadFE) => {
     try {
+      dispatch(showLoading());
       const payload = mapLoginPayloadFEToBE(loginInfo);
       await login(payload).then((response: any) => {
         const { data } = response;
@@ -54,6 +58,7 @@ function LoginPage() {
       });
     } catch (error) {
     } finally {
+      dispatch(hideLoading());
     }
   };
 
@@ -113,7 +118,6 @@ function LoginPage() {
             </Form>
           </div>
         </div>
-        <ToastContainer />
       </div>
     </div>
   );

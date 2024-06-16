@@ -47,12 +47,11 @@
     }
     .postImages {
       margin-top: 8px;
-      max-height: 480px;
-      overflow: hidden;
       .postImageItem {
+        height: 480px;
         img {
-          margin: 0 auto;
           height: 100%;
+          margin: 0 auto;
         }
       }
     }
