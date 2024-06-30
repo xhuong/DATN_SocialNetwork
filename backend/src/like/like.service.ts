@@ -10,9 +10,22 @@ export class LikeService {
   async create(createLikeDto: CreateLikeDto, response: Response) {
     const { post_id, user_id } = createLikeDto;
     try {
-      const data = await this.prisma.like.create({
-        data: createLikeDto,
+      let data = {};
+      const likeData = await this.prisma.like.findFirst({
+        where: {
+          post_id,
+          user_id,
+        },
       });
+
+      if (likeData?.hasOwnProperty("post_id")) {
+        data = JSON.parse(JSON.stringify(likeData));
+      } else {
+        data = await this.prisma.like.create({
+          data: createLikeDto,
+        });
+      }
+
       return response.status(200).json({
         status: 200,
         message: `user ${user_id} liked ${post_id} successfully`,

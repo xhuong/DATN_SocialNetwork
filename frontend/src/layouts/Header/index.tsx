@@ -6,10 +6,10 @@ import {
   IoHomeOutline,
 } from "react-icons/io5";
 import { LuMessageCircle, LuLogOut } from "react-icons/lu";
-import { MdOndemandVideo, MdGroups } from "react-icons/md";
-import { AiOutlineMessage } from "react-icons/ai";
+import { BsPostcard } from "react-icons/bs";
+import { MdGroups } from "react-icons/md";
+import { AiOutlineMessage, AiOutlineSetting } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
-import { AiOutlineSetting } from "react-icons/ai";
 
 import { logOut } from "@/utils/auth";
 
@@ -40,13 +40,13 @@ export default function Header() {
       <div className={styles.headerPage}>
         <ul className={styles.headerPageList}>
           <li className={styles.headerPageItem}>
-            <Link to="/home">
+            <Link to="/">
               <IoHomeOutline />
             </Link>
           </li>
           <li className={styles.headerPageItem}>
-            <Link to="/watch">
-              <MdOndemandVideo />
+            <Link to="/recommend">
+              <BsPostcard />
             </Link>
           </li>
           <li className={styles.headerPageItem}>

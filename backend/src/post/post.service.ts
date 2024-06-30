@@ -51,8 +51,88 @@ export class PostService {
     }
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} post`;
+  // ---  get all posts that current user was liked ---
+
+  // give the current_user_id for this api
+  // get all posts that user liked
+  async getAllPostsUserLiked(idUser: number, res: Response) {
+    try {
+      const likedPosts = await this.prisma.post.findMany({
+        where: {
+          Like: {
+            some: {
+              user_id: {
+                equals: idUser,
+              },
+            },
+          },
+        },
+        include: {
+          Like: true,
+        },
+      });
+
+      const clonePost = likedPosts.map((post) => ({
+        ...post,
+        isLiked: post.Like.some((like) => like.user_id === idUser),
+      }));
+
+      return res.status(200).json({
+        status: 200,
+        message: "Get all liked posts successfully",
+        result: {
+          data: clonePost,
+        },
+      });
+    } catch (error) {
+      return res.status(400).json({
+        status: 400,
+        message: error,
+      });
+    }
+  }
+
+  // ---  get all posts that current user was liked ---
+
+  // give the current_user_id for this api
+  // get all post that current user id not liked yet
+  // not get the post of blocked user => feature
+
+  async getAllPostsUserNotLiked(idUser: number, res: Response) {
+    try {
+      const notLikedPosts = await this.prisma.post.findMany({
+        where: {
+          Like: {
+            every: {
+              user_id: {
+                not: idUser,
+              },
+            },
+          },
+        },
+        include: {
+          Like: true,
+        },
+      });
+
+      // const clonePost = likedPosts.map((post) => ({
+      //   ...post,
+      //   isLiked: post.Like.some((like) => like.user_id === idUser),
+      // }));
+
+      return res.status(200).json({
+        status: 200,
+        message: "Get all posts that user not liked yet successfully",
+        result: {
+          data: notLikedPosts,
+        },
+      });
+    } catch (error) {
+      return res.status(400).json({
+        status: 400,
+        message: error,
+      });
+    }
   }
 
   // ---  get posts of users that current user followed them ---

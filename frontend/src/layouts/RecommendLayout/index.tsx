@@ -1,33 +1,24 @@
-import React, { useEffect, useState, createContext } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import React, { createContext, useEffect, useState } from "react";
 
-import { IPostFE, IUserBE, mapPostListBEToPostListUI } from "@/utils/common";
-
-import {
-  useGetPostListByUserIdQuery,
-  useLazyGetPostListByUserIdQuery,
-} from "@/services/PostAPI";
+import Post from "@/components/Post";
 
 import {
   useDislikeAPostMutation,
   useLazyLikeAPostQuery,
 } from "@/services/LikeAPI";
-
 import {
   IAddNewCommentDto,
   useLazyAddNewCommentQuery,
 } from "@/services/CommentAPI";
+import {
+  useGetPostListByUserIdQuery,
+  useLazyGetPostListByUserIdQuery,
+} from "@/services/PostAPI";
+
+import { IPostFE, IUserBE, mapPostListBEToPostListUI } from "@/utils/common";
 import { defaultUserInfo, getUserInfo } from "@/utils/auth";
 
-import CreatePostModal from "@/components/CreatePostModal";
-import YourThink from "@/components/YourThink";
-import Post from "@/components/Post";
-
-import FollowCardList from "@/layouts/FollowCardList";
-
 import styles from "./index.module.scss";
-import { toast } from "react-toastify";
 
 export interface IPostListProvider {
   handleLikeAPost: (userId: number, postId: number) => void;
@@ -43,13 +34,15 @@ export const PostListContext = createContext<IPostListProvider>({
   userInfo: defaultUserInfo,
 });
 
-function MiddleSide() {
+function RecommendLayout() {
   const [postList, setPostList] = useState<IPostFE[]>([]);
-  const isShowCreatePostModal = useSelector(
-    (state: RootState) => state?.modal.isShow
-  );
 
   const userInfo: IUserBE | null = getUserInfo();
+
+  const [getPostList] = useLazyGetPostListByUserIdQuery();
+  const [likeAPost] = useLazyLikeAPostQuery();
+  const [dislikeAPost] = useDislikeAPostMutation();
+  const [addNewComment] = useLazyAddNewCommentQuery();
 
   const { data, isSuccess } = useGetPostListByUserIdQuery(
     {
@@ -57,14 +50,6 @@ function MiddleSide() {
     },
     { refetchOnMountOrArgChange: true }
   );
-
-  const [getPostList] = useLazyGetPostListByUserIdQuery();
-
-  const [likeAPost] = useLazyLikeAPostQuery();
-
-  const [dislikeAPost] = useDislikeAPostMutation();
-
-  const [addNewComment] = useLazyAddNewCommentQuery();
 
   const handleLikeAPost = (userId: number, postId: number) => {
     if (userId && postId) {
@@ -85,12 +70,11 @@ function MiddleSide() {
     getPostList({ id_user: userInfo.id });
   };
 
-  const onCreatePostSuccess = () => {
-    toast.error("Create a new post successfully ✨", {
-      autoClose: 2000,
-      theme: "light",
-    });
-    getPostList({ id_user: userInfo.id });
+  const defaultValue = {
+    handleLikeAPost,
+    handleDislikeAPost,
+    handleComment,
+    userInfo,
   };
 
   useEffect(() => {
@@ -101,18 +85,10 @@ function MiddleSide() {
     }
   }, [data, isSuccess]);
 
-  const defaultValue = {
-    handleLikeAPost,
-    handleDislikeAPost,
-    handleComment,
-    userInfo,
-  };
-
   return (
     <PostListContext.Provider value={{ ...defaultValue }}>
-      <div className={styles.middleSide}>
-        <YourThink />
-        <FollowCardList />
+      <div className={styles.recommendLayout}>
+        <p className={styles.recommendTitle}>This is recommend posts for you</p>
         {postList?.map((post) => {
           return (
             <React.Fragment key={post.id}>
@@ -121,12 +97,8 @@ function MiddleSide() {
           );
         })}
       </div>
-      <CreatePostModal
-        isShow={isShowCreatePostModal}
-        onSuccess={onCreatePostSuccess}
-      />
     </PostListContext.Provider>
   );
 }
 
-export default MiddleSide;
+export default RecommendLayout;

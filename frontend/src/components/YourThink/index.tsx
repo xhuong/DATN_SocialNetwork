@@ -3,12 +3,14 @@ import { openModal } from "@/redux/slices/modal";
 
 import pictureImg from "@/assets/images/leftside/picture.png";
 import laughImg from "@/assets/images/middleSide/laugh.png";
-import girl from "@/assets/images/users/girl.jpg";
 
 import styles from "./index.module.scss";
+import { getUserInfo } from "@/utils/auth";
 
 function YourThink() {
   const dispatch = useDispatch();
+  const userInfo = getUserInfo();
+  const { id, name, image_profile } = userInfo;
 
   const YOUR_THINK_ITEMS = [
     {
@@ -29,7 +31,7 @@ function YourThink() {
     <div className={styles.yourThink}>
       <div className={styles.yourThinkHeader}>
         <div className={styles.yourThinkImage}>
-          <img src={girl} alt="" />
+          <img src={require("../../assets/images/users/default.png")} alt="" />
         </div>
         <div
           className={styles.yourThinkText}

@@ -11,7 +11,7 @@ import {
 import { PostService } from "./post.service";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
-import { Response } from "express";
+import { Response, response } from "express";
 import { GetPostsDto } from "./dto/get-posts.dto";
 
 @Controller("post")
@@ -36,9 +36,14 @@ export class PostController {
     return this.postService.getPostsByUserId(getPostsDto, response);
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.postService.findOne(+id);
+  @Get("/get-all-post-user-liked/:id")
+  getAllPostsUserLiked(@Param("id") id: string, @Res() response: Response) {
+    return this.postService.getAllPostsUserLiked(+id, response);
+  }
+
+  @Get("/get-all-post-user-not-liked/:id")
+  getAllPostsUserNotLiked(@Param("id") id: string, @Res() response: Response) {
+    return this.postService.getAllPostsUserNotLiked(+id, response);
   }
 
   @Patch(":id")

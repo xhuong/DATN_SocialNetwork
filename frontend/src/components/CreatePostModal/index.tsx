@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Form, Input } from "antd";
-import { ToastContainer, toast } from "react-toastify";
 import { useDispatch } from "react-redux";
+
+import { Form, Input } from "antd";
+import { toast } from "react-toastify";
 
 import Modal from "@/components/Modal";
 import Button from "@/components/Button";
@@ -12,13 +13,10 @@ import { useLazyUploadImagesQuery } from "@/services/UploadImageAPI";
 
 import { getUserInfo } from "@/utils/auth";
 import { closeModal } from "@/redux/slices/modal";
-
 import {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
 } from "@/utils/constant";
-
-import girl from "@/assets/images/users/girl.jpg";
 
 interface ICreatePostModalPropsType {
   isShow: boolean;
@@ -92,7 +90,11 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
 
   return (
     <Modal isShow={isShow} title="Tạo bài viết" isRounded>
-      <UserProfile image={girl} userDisplayName="Lan Anh" isRounded />
+      <UserProfile
+        image={require("../../assets/images/users/default.png")}
+        userDisplayName={userInfo.name}
+        isRounded
+      />
       <Form layout="vertical" onFinish={handleSubmitPost}>
         <Form.Item
           name="postContent"

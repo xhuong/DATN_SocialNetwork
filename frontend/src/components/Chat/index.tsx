@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Input } from "antd";
 import { MdOutlineClose } from "react-icons/md";
 
@@ -6,10 +7,10 @@ import Button from "@/components/Button";
 import UserProfile from "@/components/UserProfile";
 import { IoIosSend } from "react-icons/io";
 
-import styles from "./index.module.scss";
 import { useGetAllMessageFromConversationQuery } from "@/services/ChatAPI";
-import { useEffect, useState } from "react";
 import { IReceviedMessageFE, mapMessagesBEToMessageFE } from "@/utils/chat";
+
+import styles from "./index.module.scss";
 
 function ChatWindow() {
   const { data, isSuccess } = useGetAllMessageFromConversationQuery({
@@ -30,7 +31,7 @@ function ChatWindow() {
       <div className={styles.chatHeading}>
         <div className={styles.profile}>
           <UserProfile userDisplayName="Xuân Trường" image={girl} isRounded />
-        </div>
+        </div> 
         <div className={styles.chatHeadingAction}>
           <span className={styles.closeChatWindow}>
             <MdOutlineClose size={18} />

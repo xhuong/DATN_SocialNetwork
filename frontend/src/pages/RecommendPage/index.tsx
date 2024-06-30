@@ -1,16 +1,16 @@
 import ChatWindow from "@/components/Chat";
 import Header from "@/layouts/Header";
 import MainLayout from "@/layouts/MainLayout";
-import MiddleSide from "@/layouts/MiddleSide";
+import RecommendLayout from "@/layouts/RecommendLayout";
 
-const HomePage = () => {
+const RecommendPage = () => {
   return (
     <>
       <Header />
-      <MainLayout children={<MiddleSide />} />
+      <MainLayout children={<RecommendLayout />} />
       <ChatWindow />
     </>
   );
 };
 
-export default HomePage;
+export default RecommendPage;

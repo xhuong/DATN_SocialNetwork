@@ -17,7 +17,9 @@ import { PostModule } from "./post/post.module";
 import { LikeModule } from "./like/like.module";
 import { FollowerModule } from "./follower/follower.module";
 import { CommentModule } from "./comment/comment.module";
-import { MessageModule } from './message/message.module';
+import { MessageModule } from "./message/message.module";
+import { MessageGateway } from "./message/message.gateway";
+import { RecommendModule } from './recommend/recommend.module';
 
 @Module({
   imports: [
@@ -35,10 +37,12 @@ import { MessageModule } from './message/message.module';
     FollowerModule,
     CommentModule,
     MessageModule,
+    RecommendModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    MessageGateway,
     // {
     //   provide: APP_INTERCEPTOR,
     //   useClass: ResponseInterceptor,

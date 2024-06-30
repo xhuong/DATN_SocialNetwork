@@ -1,15 +1,20 @@
+import { ReactNode } from "react";
+
 import LeftSide from "@/layouts/LeftSide";
 import RightSide from "@/layouts/RightSide";
-import MiddleSide from "@/layouts/MiddleSide";
 
 import styles from "./index.module.scss";
 
-function MainLayout() {
+interface IMainLayoutProps {
+  children: ReactNode;
+}
+
+function MainLayout(mainLayoutProps: IMainLayoutProps) {
   return (
     <>
       <div className={styles.mainLayout}>
         <LeftSide />
-        <MiddleSide />
+        {mainLayoutProps.children}
         <RightSide />
       </div>
     </>

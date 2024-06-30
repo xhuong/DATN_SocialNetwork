@@ -9,7 +9,8 @@ import Loading from "@/components/Loading";
 
 import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
-import { RootState } from "./redux/store";
+import { RootState } from "@/redux/store";
+import RecommendPage from "@/pages/RecommendPage";
 
 function App() {
   const isLoading = useSelector((state: RootState) => state.loading.isLoading);
@@ -23,6 +24,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recommend"
+              element={
+                <ProtectedRoute>
+                  <RecommendPage />
                 </ProtectedRoute>
               }
             />
