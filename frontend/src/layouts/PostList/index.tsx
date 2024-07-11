@@ -43,7 +43,7 @@ export const PostListContext = createContext<IPostListProvider>({
   userInfo: defaultUserInfo,
 });
 
-function MiddleSide() {
+function PostList() {
   const [postList, setPostList] = useState<IPostFE[]>([]);
   const isShowCreatePostModal = useSelector(
     (state: RootState) => state?.modal.isShow
@@ -110,7 +110,7 @@ function MiddleSide() {
 
   return (
     <PostListContext.Provider value={{ ...defaultValue }}>
-      <div className={styles.middleSide}>
+      <div className={styles.postList}>
         <YourThink />
         <FollowCardList />
         {postList?.map((post) => {
@@ -129,4 +129,4 @@ function MiddleSide() {
   );
 }
 
-export default MiddleSide;
+export default PostList;

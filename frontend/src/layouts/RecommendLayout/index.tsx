@@ -19,6 +19,10 @@ import { IPostFE, IUserBE, mapPostListBEToPostListUI } from "@/utils/common";
 import { defaultUserInfo, getUserInfo } from "@/utils/auth";
 
 import styles from "./index.module.scss";
+import {
+  useGetRecommendPostsQuery,
+  useLazyGetRecommendPostsQuery,
+} from "@/services/RecommendAPI";
 
 export interface IPostListProvider {
   handleLikeAPost: (userId: number, postId: number) => void;
@@ -44,12 +48,37 @@ function RecommendLayout() {
   const [dislikeAPost] = useDislikeAPostMutation();
   const [addNewComment] = useLazyAddNewCommentQuery();
 
-  const { data, isSuccess } = useGetPostListByUserIdQuery(
-    {
-      id_user: userInfo.id,
-    },
-    { refetchOnMountOrArgChange: true }
-  );
+  const { data, isSuccess } = useGetRecommendPostsQuery({
+    current_id_user: 2,
+    liked_posts: [
+      {
+        post_id: 1,
+        title: "React Developer",
+      },
+    ],
+    unliked_posts: [
+      { post_id: 1, title: "Introduction to Machine Learning Algorithms" },
+      { post_id: 2, title: "Getting Started with React Components" },
+      { post_id: 3, title: "Living a Balanced Life" },
+      { post_id: 4, title: "The Evolution of Electric Cars" },
+      { post_id: 5, title: "Advanced Machine Learning Techniques" },
+      { post_id: 6, title: "State Management in React" },
+      { post_id: 7, title: "Mindfulness and Life Balance" },
+      { post_id: 8, title: "Top Cars of 2024" },
+      { post_id: 9, title: "Deep Learning for Image Recognition" },
+      { post_id: 10, title: "Building Reusable React Components" },
+      { post_id: 11, title: "Life Lessons from Great Leaders" },
+      { post_id: 12, title: "The Future of Autonomous Cars" },
+      { post_id: 13, title: "Start Learning Machine Learning" },
+      { post_id: 14, title: "React Hooks Explained" },
+      { post_id: 15, title: "Creating a Meaningful Life" },
+      { post_id: 16, title: "Car Maintenance Tips for Longevity" },
+      { post_id: 17, title: "Machine Learning in Healthcare" },
+      { post_id: 18, title: "Optimizing React Performance" },
+      { post_id: 19, title: "Finding Purpose in Life" },
+      { post_id: 20, title: "The Latest in Car Technology" },
+    ],
+  });
 
   const handleLikeAPost = (userId: number, postId: number) => {
     if (userId && postId) {

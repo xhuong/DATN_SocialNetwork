@@ -11,16 +11,23 @@ import { MdGroups } from "react-icons/md";
 import { AiOutlineMessage, AiOutlineSetting } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
 
+import Chat from "@/layouts/Chat";
 import { logOut } from "@/utils/auth";
-
 import UserProfile from "@/components/UserProfile";
-
 import girl from "@/assets/images/users/girl.jpg";
 
 import styles from "./index.module.scss";
+import { useDispatch } from "react-redux";
+import { openChatModal } from "@/redux/slices/chat";
 
 export default function Header() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const showChatModal = () => {
+    dispatch(openChatModal());
+  };
+
   const handleLogout = () => {
     logOut();
     navigate("/login");
@@ -69,7 +76,7 @@ export default function Header() {
       <div className={styles.headerProfile}>
         <ul className={styles.headerProfileList}>
           <li className={styles.headerProfileItem}>
-            <div className={styles.headerIcon}>
+            <div className={styles.headerIcon} onClick={showChatModal}>
               <AiOutlineMessage />
             </div>
           </li>
@@ -90,9 +97,10 @@ export default function Header() {
                 <div className={styles.headerCardInfoWrapper}>
                   <UserProfile
                     image={girl}
-                    userDisplayName="Xuân Hoàng"
+                    userDisplayName="Xuân Hướng"
                     isRounded
                     bgGray
+                    canNegative
                   />
                 </div>
                 <ul className={styles.headerCardInfoList}>
@@ -117,6 +125,7 @@ export default function Header() {
           </li>
         </ul>
       </div>
+      <Chat />
     </div>
   );
 }

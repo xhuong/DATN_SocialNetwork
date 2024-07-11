@@ -17,7 +17,6 @@ import {
   mapUserFollowBEToUserFollowFEWithouAddress,
 } from "@/utils/follow";
 import styles from "./index.module.scss";
-import ChatWindow from "@/components/Chat";
 
 function RightSide() {
   const userInfo: IUserBE = getUserInfo();

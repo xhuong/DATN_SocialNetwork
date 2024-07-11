@@ -9,6 +9,7 @@
   --active-color: #31a24c;
   --gray-light-color: #f0f2f5;
   --gray-bg-color: #f0f2f5;
+  --purple-color: #a487db;
   --z-index-modal: 9;
 }
 
@@ -68,4 +69,10 @@ p {
 input {
   outline: none;
   border: none;
+}
+
+.container {
+  width: 1200px;
+  max-width: 1200px;
+  margin: 0 auto;
 }

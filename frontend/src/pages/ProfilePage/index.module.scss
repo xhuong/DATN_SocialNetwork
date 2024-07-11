@@ -1,0 +1,91 @@
+.myProfile {
+  padding-bottom: 400px;
+  .backgroundCover {
+    height: 460px;
+    max-height: 460px;
+    overflow: hidden;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    img {
+      margin: 0 auto;
+    }
+  }
+  .myProfileContainer {
+    width: 960px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    transform: translateY(-20%);
+    .author {
+      display: flex;
+      column-gap: 16px;
+      align-items: center;
+      .authorAvatar {
+        position: relative;
+        .authorAvatarWrapper {
+          width: 180px;
+          height: 180px;
+          border-radius: 50%;
+          overflow: hidden;
+          border: 4px solid rgb(159, 8, 247);
+        }
+        .cameraIcon {
+          cursor: pointer;
+          position: absolute;
+          bottom: 22px;
+          right: 2px;
+          display: inline-block;
+          padding: 6px;
+          border-radius: 50%;
+          color: #fff;
+          background-color: rgba(41, 39, 39, 0.6);
+          transition: all 0.2s ease-in;
+        }
+        .cameraIcon:hover {
+          background-color: rgba(41, 39, 39, 0.8);
+        }
+      }
+      .authorInfo {
+        .authorName {
+          font-weight: 600;
+          font-style: 3rem;
+        }
+        .followingCount {
+          font-weight: 500;
+          font-size: 1.6rem;
+        }
+      }
+    }
+    .action {
+      display: flex;
+      align-items: center;
+      column-gap: 8px;
+    }
+  }
+  .body {
+    .introduce {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 16px;
+      .title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+      }
+    }
+    .introduceList {
+      .introduceItem {
+        margin-bottom: 10px;
+        .icon {
+          margin-right: 8px;
+        }
+      }
+    }
+    .profilePost {
+    }
+  }
+}

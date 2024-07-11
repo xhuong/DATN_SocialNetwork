@@ -13,7 +13,7 @@ import { IoEarth } from "react-icons/io5";
 import girl from "@/assets/images/users/girl.jpg";
 
 import { createContext, useContext, useState } from "react";
-import { IPostListProvider, PostListContext } from "@/layouts/MiddleSide";
+import { IPostListProvider, PostListContext } from "@/layouts/PostList";
 
 import styles from "./index.module.scss";
 

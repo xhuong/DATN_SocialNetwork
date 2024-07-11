@@ -53,7 +53,6 @@
 # if __name__ == '__main__':
 #     app.run(debug=True)
 
-
 from flask import Flask, request, jsonify
 import pandas as pd
 from recommendation import build_model, recommend_unliked_posts
@@ -82,3 +81,4 @@ def recommend():
 
 if __name__ == '__main__':
     app.run(debug=True)
+

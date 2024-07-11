@@ -38,6 +38,7 @@ export class AuthService {
             user_name: data?.user_name,
             address: data?.address,
             role_id: data?.role_id,
+            image_profile: data?.image_profile,
           };
 
           return {

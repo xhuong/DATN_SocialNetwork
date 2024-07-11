@@ -47,7 +47,6 @@
 
 #     return recommended_posts
 
-
 import pandas as pd
 from gensim.models import Word2Vec
 from sklearn.metrics.pairwise import cosine_similarity
@@ -99,3 +98,5 @@ def recommend_unliked_posts(liked_posts_df, unliked_posts_df, model, min_similar
     recommended_posts = filtered_posts.sort_values(by='similarity_score', ascending=False).head(top_n)
 
     return recommended_posts
+
+

@@ -1,7 +1,7 @@
 import { IPostBE } from "@/utils/common";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-interface IPostsTypes {
+export interface IPostsTypes {
   status: number;
   message: string;
   result: {

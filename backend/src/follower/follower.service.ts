@@ -86,7 +86,7 @@ export class FollowerService {
 
       return response.status(200).json({
         status: 200,
-        message: `Get list following users successfully`,
+        message: `Get list followers successfully`,
         result: {
           data: cloneRes,
         },
@@ -94,7 +94,7 @@ export class FollowerService {
     } catch (error) {
       return {
         status: 400,
-        message: "Get list following users failed!",
+        message: "Get list followers failed!",
       };
     }
   }

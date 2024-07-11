@@ -7,6 +7,8 @@ interface IUserProfilePropsType {
   userDisplayName: string;
   isActive?: boolean;
   bgGray?: boolean;
+  canNegative?: boolean;
+  borderBottom?: boolean;
 }
 
 function UserProfile({
@@ -15,10 +17,21 @@ function UserProfile({
   userDisplayName,
   isActive,
   bgGray,
+  canNegative,
+  borderBottom,
 }: IUserProfilePropsType) {
   const navigate = useNavigate();
   return (
-    <div className={`${styles.userProfile} ${bgGray ? styles.bgGray : ""}`}>
+    <div
+      className={`
+      ${styles.userProfile} 
+      ${bgGray ? styles.bgGray : ""}  
+      ${borderBottom ? styles.borderBottom : ""}
+      `}
+      onClick={() => {
+        if (canNegative) navigate("/profile");
+      }}
+    >
       <div
         className={`
         ${styles.userProfileImage} 
