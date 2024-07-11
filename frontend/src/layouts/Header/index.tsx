@@ -11,7 +11,7 @@ import { MdGroups } from "react-icons/md";
 import { AiOutlineMessage, AiOutlineSetting } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
 
-import Chat from "@/layouts/Chat";
+import Chat from "@/layouts/ChatLayout/components/Chat";
 import { logOut } from "@/utils/auth";
 import UserProfile from "@/components/UserProfile";
 import girl from "@/assets/images/users/girl.jpg";

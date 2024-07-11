@@ -17,7 +17,6 @@
 // }
 // bootstrap();
 
-
 // include socket server version
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
@@ -27,6 +26,7 @@ import { Server, Socket } from "socket.io";
 
 interface CustomeSocket extends Socket {
   username?: string;
+  userId: number;
 }
 
 class CustomIoAdapter extends IoAdapter {
@@ -42,29 +42,42 @@ class CustomIoAdapter extends IoAdapter {
 
     this.server.use((socket: CustomeSocket, next: (err?: any) => void) => {
       const username = socket.handshake.auth.username;
+      const userId = socket.handshake.auth.userId;
+      console.log(`[SERVER] username: ${username}, userId: ${userId}`);
       if (!username) {
         return next(new Error("invalid username"));
       }
       socket.username = username;
+      // socket.userId = userId;
       next();
     });
 
     this.server.on("connection", (socket: CustomeSocket) => {
       const users = [];
       for (let [id, socket] of this.server.of("/").sockets) {
+        let userId = socket.handshake.auth.userId;
+        console.log(`[SERVER] [connection event] userId: ${userId}`);
         users.push({
-          userID: id,
+          // userID: id,
+          socketId: id,
           username: (socket as CustomeSocket).username,
+          userId: userId,
         });
       }
       socket.emit("users", users);
 
       socket.broadcast.emit("user connected", {
-        userID: socket.id,
+        // userID: socket.id,
+        socketId: socket.id,
         username: socket.username,
+        userId: socket.handshake.auth.userId,
       });
 
-      socket.on("private message", ({ content, to }) => {
+      socket.on("private message", ({ content, to, receivedUserId }) => {
+        console.log(
+          `[SERVER] [private message] receivedUserId: ${receivedUserId}`,
+        );
+
         socket.to(to).emit("private message", {
           content,
           from: socket.id,

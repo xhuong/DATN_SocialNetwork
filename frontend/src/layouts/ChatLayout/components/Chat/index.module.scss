@@ -4,7 +4,9 @@
   .leftPanel {
     height: 480px;
     max-height: 480px;
+    padding-right: 8px;
     overflow-y: auto;
+    border-right: 1px solid #d3d3d3;
 
     /* width */
     &::-webkit-scrollbar {
