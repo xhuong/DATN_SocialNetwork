@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from "@nestjs/common";
+import { Controller, Post, Body, Get } from "@nestjs/common";
 import { AppService } from "./app.service";
 
 @Controller()
@@ -17,5 +17,10 @@ export class AppController {
     const prefix = "+84";
     const phone = prefix.concat(data.phone);
     return await this.appService.verifyOtp(phone, data.otp);
+  }
+
+  @Get()
+  async hello(){
+    return "hello my friend";
   }
 }
