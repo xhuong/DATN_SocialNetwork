@@ -14,7 +14,9 @@ function MainLayout(mainLayoutProps: IMainLayoutProps) {
     <>
       <div className={styles.mainLayout}>
         <LeftSide />
-        {mainLayoutProps.children}
+        <div style={{ width: "960px", maxWidth: "960px" }}>
+          {mainLayoutProps.children}
+        </div>
         <RightSide />
       </div>
     </>

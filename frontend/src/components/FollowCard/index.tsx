@@ -56,7 +56,7 @@ function FollowCard({ user }: { user: IFollowUserFE }) {
           btnType="secondary"
           isRounded
           isFullWidth
-          mt12
+          mt12={true}
           onClick={() => onFollowAction(user.id, EFollowActionType.UNFOLLOW)}
         >
           <RiUserFollowLine /> Unfollow
@@ -66,7 +66,7 @@ function FollowCard({ user }: { user: IFollowUserFE }) {
           btnType="secondary"
           isRounded
           isFullWidth
-          mt12
+          mt12={true}
           htmlType="submit"
           onClick={() => onFollowAction(user.id, EFollowActionType.FOLLOW)}
         >

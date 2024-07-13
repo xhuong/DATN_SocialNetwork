@@ -12,19 +12,22 @@ export const ChatAPI = createApi({
   reducerPath: "ChatAPI",
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),
   endpoints: (builder) => ({
-    sendMessage: builder.query<IMessageResponseType, IPayloadChat>({
-      query: (payload) => ({
-        url: BASE_URL,
-        body: payload,
-        method: "POST",
-      }),
+    saveMessage: builder.query<IMessageResponseType, IPayloadChat>({
+      query: (payload) => {
+        console.log("payload", payload);
+        return {
+          url: BASE_URL,
+          body: payload,
+          method: "POST",
+        };
+      },
     }),
     getAllMessageFromConversation: builder.query<
       IMessagesResponseTypes,
-      { conversation_id: number; sender_user_id: number }
+      { sender_user_id: number; second_user_id: number }
     >({
       query: (payload) => ({
-        url: `${BASE_URL}/get-messages-from-conversation-id`,
+        url: `${BASE_URL}/get-messages`,
         body: payload,
         method: "POST",
       }),
@@ -33,7 +36,7 @@ export const ChatAPI = createApi({
 });
 
 export const {
-  useLazySendMessageQuery,
+  useLazySaveMessageQuery,
   useLazyGetAllMessageFromConversationQuery,
   useGetAllMessageFromConversationQuery,
 } = ChatAPI;

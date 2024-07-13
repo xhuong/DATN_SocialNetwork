@@ -4,6 +4,7 @@ import { Col, Modal, Row } from "antd";
 
 import { RootState } from "@/redux/store";
 import { closeChatModal } from "@/redux/slices/chat";
+import { getUserInfo } from "@/utils/auth";
 
 import User from "@/layouts/ChatLayout/components/User";
 import MessagePanel from "@/layouts/ChatLayout/components/MessagePanel";
@@ -11,12 +12,58 @@ import MessagePanel from "@/layouts/ChatLayout/components/MessagePanel";
 import socket from "../socket";
 
 import styles from "./index.module.scss";
+import {
+  useLazyGetFollowerUsersQuery,
+  useLazyGetFollowingUsersQuery,
+} from "@/services/FollowAPI";
+import {
+  useLazyGetAllMessageFromConversationQuery,
+  useLazySaveMessageQuery,
+} from "@/services/ChatAPI";
+import { getMessage } from "@reduxjs/toolkit/dist/actionCreatorInvariantMiddleware";
+import { IReceviedMessageBE } from "@/utils/chat";
+
+interface IMessage {
+  content: string;
+  fromSelf: boolean;
+}
+
+interface IUserChat {
+  socketId: string;
+  username: string;
+  userId: number;
+  connected?: boolean;
+  hasNewMessages?: boolean;
+  messages: IMessage[];
+}
+
+interface ISelectedUser extends IUserChat {
+  self: boolean;
+}
+
+const mapMessagesBEToMessagesFE = (
+  messages: IReceviedMessageBE[]
+): IMessage[] => {
+  return messages.map((message) => ({
+    content: message.message_text,
+    fromSelf: message.is_own_message,
+  }));
+};
 
 const Chat = () => {
-  const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [users, setUsers] = useState<any>([]);
-  const show = useSelector((state: RootState) => state.chatModal.isShow);
+  const userInfo = getUserInfo();
   const dispatch = useDispatch();
+  const show = useSelector((state: RootState) => state.chatModal.isShow);
+
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [users, setUsers] = useState<IUserChat[]>([]);
+
+  const [saveMessages] = useLazySaveMessageQuery();
+  const [getFollowers] = useLazyGetFollowerUsersQuery();
+  const [getFollowingUsers] = useLazyGetFollowingUsersQuery();
+  const [getMessages] = useLazyGetAllMessageFromConversationQuery({
+    refetchOnFocus: true,
+  });
 
   const onCloseModal = () => {
     dispatch(closeChatModal());
@@ -28,6 +75,7 @@ const Chat = () => {
         content,
         // to: selectedUser.userID,
         to: selectedUser.socketId,
+        sendFromUser: userInfo.id,
         receivedUserId: selectedUser.userId,
       });
 
@@ -52,10 +100,32 @@ const Chat = () => {
     }
   };
 
-  const onSelectUser = (user: any) => {
-    setSelectedUser(user);
-    user.hasNewMessages = false;
+  const onSelectUser = async (user: ISelectedUser) => {
+    console.log("🚀 ~ onSelectUser ~ user:", user);
+    // calling api to retrieved messages from server
+
+    // user.messages = [...mapMessagesBEToMessagesFE(messages || [])];
+    if (!user?.self) {
+      const messages = await getMessages({
+        sender_user_id: userInfo.id,
+        second_user_id: user.userId,
+      }).then((res) => {
+        return res.data?.result.data;
+      });
+      user.messages = [...mapMessagesBEToMessagesFE(messages || [])];
+    }
+    setTimeout(() => {
+      setSelectedUser(user);
+    });
+    // user.hasNewMessages = false;
   };
+
+  useEffect(() => {
+    if (userInfo?.name && userInfo?.id && show) {
+      socket.auth = { username: userInfo.name, userId: userInfo.id };
+      socket.connect();
+    }
+  }, [userInfo, show]);
 
   useEffect(() => {
     const initReactiveProperties = (user: any) => {
@@ -87,8 +157,45 @@ const Chat = () => {
       );
     });
 
-    socket.on("users", (usersFromServer) => {
-      console.log("🚀 ~ socket.on ~ usersFromServer:", usersFromServer);
+    // both users follow the last one then they can sending message
+
+    socket.on("users", async (usersFromServer) => {
+      // console.log("[CLIENT] [USERS EVENT] usersFromServer", usersFromServer);
+
+      // const userInfo = getUserInfo();
+      // const userServerIds = usersFromServer.map((u: any) => u.userId);
+
+      // users followed me
+      // const followersIds = await getFollowers({ id: userInfo.id }).then(
+      //   (data) => data?.data?.result.data.map((user) => user.id)
+      // );
+
+      // users I followed
+      // const followingIds = await getFollowingUsers({ id: userInfo.id }).then(
+      //   (data) => data?.data?.result?.data?.map((user: any) => user.user_id)
+      // );
+
+      // console.log("🚀 ~ socket.on ~ followersIds:", followersIds);
+      // console.log("🚀 ~ socket.on ~ followingIds:", followingIds);
+      // console.log("🚀 ~ socket.on ~ userServerIds:", userServerIds);
+
+      // get users has been followed me
+      // const followedIdsInUserServer = followersIds?.filter((followerId) =>
+      //   userServerIds.includes(followerId)
+      // );
+      // console.log(
+      //   "🚀 ~ socket.on ~ followedIdsInUserServer:",
+      //   followedIdsInUserServer
+      // );
+
+      // const ids = followingIds?.filter((followingId) =>
+      //   followedIdsInUserServer?.some(
+      //     (followedId) => followedId === followingId
+      //   )
+      // );
+
+      // console.log("[CLIENT] [users event] match ids:", ids);
+
       const updatedUsers = usersFromServer.map((user: any) => {
         // const isSelf = user.userID === socket.id;
         const isSelf = user.socketId === socket.id;
@@ -110,8 +217,8 @@ const Chat = () => {
       setUsers(updatedUsers);
     });
 
+    // lắng nghe khi có người dùng mới connect tới server
     socket.on("user connected", (user) => {
-      console.log(`[CLIENT] [user connected event] user: ${user}`);
       initReactiveProperties(user);
       setUsers((prevUsers: any) => [...prevUsers, user]);
     });
@@ -125,33 +232,49 @@ const Chat = () => {
       );
     });
 
-    socket.on("private message", ({ content, from }) => {
-      console.log("selectedUser", selectedUser);
-      // if (selectedUser?.userID === from)
-      if (selectedUser?.socketId === from)
-        setSelectedUser({
-          ...selectedUser,
-          messages: [...selectedUser.messages, { content, fromSelf: false }],
-        });
+    // lắng nghe sự kiện nhận được private message
+    socket.on(
+      "private message",
+      async ({ content, from, sendFromUser, receivedUserId }) => {
+        // if (selectedUser?.userID === from)
+        if (selectedUser?.socketId === from)
+          setSelectedUser({
+            ...selectedUser,
+            messages: [...selectedUser.messages, { content, fromSelf: false }],
+          });
 
-      setUsers((prevUsers: any) => [
-        ...prevUsers.map((user: any) => {
-          // if (user.userID === from) {
-          if (user.socketId === from) {
-            const updatedMessages = [
-              ...user.messages,
-              { content, fromSelf: false },
-            ];
-            return {
-              ...user,
-              messages: updatedMessages,
-              hasNewMessages: user === selectedUser ? false : true,
-            };
-          }
-          return user;
-        }),
-      ]);
-    });
+        setUsers((prevUsers: any) => [
+          ...prevUsers.map((user: any) => {
+            // if (user.userID === from) {
+            if (user.socketId === from) {
+              const updatedMessages = [
+                ...user.messages,
+                { content, fromSelf: false },
+              ];
+              return {
+                ...user,
+                messages: updatedMessages,
+                hasNewMessages: user === selectedUser ? false : true,
+              };
+            }
+            return user;
+          }),
+        ]);
+
+        // save message to DB
+        try {
+          await saveMessages({
+            message_text: content,
+            send_user_id: sendFromUser,
+            received_user_id: receivedUserId,
+            send_datetime: "2024-06-16T15:46:26.023Z",
+          });
+          console.log("Saved message to DB ✨");
+        } catch (err) {
+          console.log("Error when saving message to DB: ", err);
+        }
+      }
+    );
 
     return () => {
       socket.off("connect");
@@ -182,13 +305,13 @@ const Chat = () => {
                 key={user.socketId}
                 user={user}
                 // selected={user?.userID === selectedUser?.userID}
-                selected={user?.socketId === selectedUser?.socketId}
+                selected={user?.userId === selectedUser?.userId}
                 onSelect={() => onSelectUser(user)}
               />
             </Fragment>
           ))}
         </Col>
-        <Col xl={18}>
+        <Col sm={18} xl={18}>
           {selectedUser && (
             <MessagePanel user={selectedUser} onMessage={onMessage} />
           )}

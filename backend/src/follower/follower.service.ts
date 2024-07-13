@@ -64,6 +64,38 @@ export class FollowerService {
     try {
       const data = await this.prisma.follower.findMany({
         where: {
+          follower_id: user_id,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image_profile: true,
+            },
+          },
+        },
+      });
+
+      return response.status(200).json({
+        status: 200,
+        message: `Get following users successfully`,
+        result: {
+          data,
+        },
+      });
+    } catch (error) {
+      return {
+        status: 400,
+        message: "Get following users failed",
+      };
+    }
+  }
+
+  async findAllFollowersUsers(user_id: number, response: Response) {
+    try {
+      const data = await this.prisma.follower.findMany({
+        where: {
           user_id,
         },
         include: {

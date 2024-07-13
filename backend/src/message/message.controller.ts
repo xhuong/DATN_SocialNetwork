@@ -20,11 +20,14 @@ export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
   @Post()
-  create(@Body() createMessageDto: CreateMessageDto, @Res() res: Response) {
-    return this.messageService.sentMessage(createMessageDto, res);
+  saveMessage(
+    @Body() createMessageDto: CreateMessageDto,
+    @Res() res: Response,
+  ) {
+    return this.messageService.saveMessage(createMessageDto, res);
   }
 
-  @Post("/get-messages-from-conversation-id")
+  @Post("/get-messages")
   getMessages(@Body() getMessageDto: GetMessageDto, @Res() res: Response) {
     return this.messageService.getMessages(getMessageDto, res);
   }

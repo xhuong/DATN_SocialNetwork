@@ -9,10 +9,33 @@ import { GetMessageDto } from "./dto/get-message.dto";
 export class MessageService {
   constructor(private prisma: PrismaService) {}
 
-  async sentMessage(createMessageDto: CreateMessageDto, res: Response) {
+  async saveMessage(createMessageDto: CreateMessageDto, res: Response) {
     try {
+      const { message_text, received_user_id, send_datetime, send_user_id } =
+        createMessageDto;
+      const ids = [send_user_id, received_user_id];
+
+      // find conversation first
+      const conversationId = await this.prisma.conversation
+        .findFirst({
+          where: {
+            first_user_id: {
+              in: ids,
+            },
+            second_user_id: {
+              in: ids,
+            },
+          },
+        })
+        .then((res) => res.id);
+
       const data = await this.prisma.message.create({
-        data: createMessageDto,
+        data: {
+          message_text,
+          send_datetime,
+          conversation_id: conversationId,
+          send_user_id,
+        },
       });
 
       return res.status(200).json({
@@ -31,11 +54,28 @@ export class MessageService {
   }
 
   async getMessages(getMessageDto: GetMessageDto, res: Response) {
-    const { conversation_id, sender_user_id } = getMessageDto;
     try {
+      // find conversation first
+      const { sender_user_id, second_user_id } = getMessageDto;
+      const ids = [sender_user_id, second_user_id];
+      const conversationId = await this.prisma.conversation
+        .findFirst({
+          where: {
+            first_user_id: {
+              in: ids,
+            },
+            second_user_id: {
+              in: ids,
+            },
+          },
+        })
+        .then((res) => res.id);
+
+      console.log("conversationId", conversationId);
+
       const data = await this.prisma.message.findMany({
         where: {
-          conversation_id: conversation_id,
+          conversation_id: conversationId,
         },
       });
 
@@ -43,6 +83,8 @@ export class MessageService {
         ...message,
         is_own_message: message.send_user_id === sender_user_id,
       }));
+
+      // console.log("🚀 ~ MessageService ~ cloneRes ~ cloneRes:", cloneRes);
 
       return res.status(200).json({
         status: 200,
@@ -54,7 +96,7 @@ export class MessageService {
     } catch (error) {
       return {
         status: 400,
-        message: `Error when get all message with conversation id = ${conversation_id}!, ${error}`,
+        message: `Error when get all messages: ${error}`,
       };
     }
   }

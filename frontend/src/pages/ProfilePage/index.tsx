@@ -20,10 +20,9 @@ import {
 } from "@/pages/constant";
 
 import styles from "./index.module.scss";
+import { url } from "inspector";
 
 const ProfilePage = () => {
-  
-
   const userInfo: IUserBE | null = getUserInfo();
 
   return (
@@ -35,12 +34,21 @@ const ProfilePage = () => {
           marginTop: "var(--header-height)",
         }}
       >
-        <div className="container">
-          <div className={styles.backgroundCover}>
-            <img
-              src="https://scontent.fdad3-6.fna.fbcdn.net/v/t1.6435-9/73324614_412572782970430_6454372437478866944_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=b895b5&_nc_ohc=ltICQjP4OZgQ7kNvgFh9k1_&_nc_ht=scontent.fdad3-6.fna&oh=00_AYAEMhz_sg6xZhOXpXaChRITsHa4JPelqVuvWJuW-LYhHA&oe=66ACEDBE"
-              alt=""
-            />
+        <div className="container" style={{ position: "relative" }}>
+          <div className={styles.wrapper}>
+            <div
+              className={styles.blurBackground}
+              style={{
+                backgroundImage:
+                  "url(https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+              }}
+            ></div>
+            <div className={styles.backgroundCover}>
+              <img
+                src="https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt=""
+              />
+            </div>
           </div>
           <div className={styles.myProfileContainer}>
             <div className={styles.header}>

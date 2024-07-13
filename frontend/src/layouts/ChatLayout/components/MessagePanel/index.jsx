@@ -3,10 +3,11 @@ import { Input } from "antd";
 
 import defaultAvatar from "@/assets/images/users/default.png";
 import UserProfile from "@/components/UserProfile";
+import Button from "@/components/Button";
+
+import { IoIosSend } from "react-icons/io";
 
 import styles from "./index.module.scss";
-import Button from "@/components/Button";
-import { IoIosSend } from "react-icons/io";
 
 const MessagePanel = ({ user, onMessage }) => {
   const [input, setInput] = useState("");

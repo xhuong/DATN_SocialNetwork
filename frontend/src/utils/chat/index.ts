@@ -45,9 +45,9 @@ export interface IReceviedMessageFE {
 
 interface IPayloadChat {
   send_user_id: number;
+  received_user_id: number;
   message_text: string;
   send_datetime: string;
-  conversation_id: number;
 }
 
 export type {

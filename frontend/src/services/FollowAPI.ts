@@ -27,6 +27,13 @@ export const FollowAPI = createApi({
         };
       },
     }),
+    getFollowingUsers: builder.query<IFollowUserResponseType, { id: number }>({
+      query: ({ id }) => {
+        return {
+          url: `${BASE_URL}/get-following-users/${id}`,
+        };
+      },
+    }),
     followUser: builder.query<IOnFollowUserResponseType, IFollowUserPayload>({
       query: (payload) => {
         return {
@@ -53,4 +60,5 @@ export const {
   useLazyGetNotFollowingUserQuery,
   useLazyFollowUserQuery,
   useLazyUnfollowUserQuery,
+  useLazyGetFollowingUsersQuery,
 } = FollowAPI;

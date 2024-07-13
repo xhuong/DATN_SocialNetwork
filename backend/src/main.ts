@@ -52,7 +52,8 @@ class CustomIoAdapter extends IoAdapter {
       next();
     });
 
-    this.server.on("connection", (socket: CustomeSocket) => {
+    // lắng nghe sự kiện client connect tới server
+    this.server.on("connection", async (socket: CustomeSocket) => {
       const users = [];
       for (let [id, socket] of this.server.of("/").sockets) {
         let userId = socket.handshake.auth.userId;
@@ -73,16 +74,21 @@ class CustomIoAdapter extends IoAdapter {
         userId: socket.handshake.auth.userId,
       });
 
-      socket.on("private message", ({ content, to, receivedUserId }) => {
-        console.log(
-          `[SERVER] [private message] receivedUserId: ${receivedUserId}`,
-        );
+      socket.on(
+        "private message",
+        ({ content, to, sendFromUser, receivedUserId }) => {
+          console.log(
+            `[SERVER] [private message] receivedUserId: ${receivedUserId}`,
+          );
 
-        socket.to(to).emit("private message", {
-          content,
-          from: socket.id,
-        });
-      });
+          socket.to(to).emit("private message", {
+            content,
+            from: socket.id,
+            sendFromUser,
+            receivedUserId,
+          });
+        },
+      );
 
       socket.on("disconnect", () => {
         socket.broadcast.emit("user disconnected", socket.id);

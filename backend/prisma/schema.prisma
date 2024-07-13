@@ -35,8 +35,9 @@ model User {
   Comment       Comment[]
   followers     Follower[]     @relation("user_followers")
   following     Follower[]     @relation("user_following")
-  Participants  Participants[]
   Message       Message[]
+  conversation1 Conversation[] @relation("first_user_conversations")
+  conversation2 Conversation[] @relation("second_user_conversations")
 }
 
 model Post {
@@ -87,19 +88,14 @@ model Comment {
 }
 
 model Conversation {
-  id                  Int            @id @default(autoincrement())
+  id                  Int       @id @default(autoincrement())
   name                String
   last_read_timestamp DateTime
-  Participants        Participants[]
+  first_user_id       Int      
+  second_user_id      Int      
   Message             Message[]
-}
-
-model Participants {
-  id              Int          @id @default(autoincrement())
-  conversation_id Int
-  conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user_id         Int
-  user            User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  firstUser           User      @relation("first_user_conversations", fields: [first_user_id], references: [id])
+  secondUser          User      @relation("second_user_conversations", fields: [second_user_id], references: [id])
 }
 
 model Message {

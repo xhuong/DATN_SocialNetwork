@@ -19,14 +19,6 @@ import socket from "@/layouts/ChatLayout/components/socket";
 
 function App() {
   const isLoading = useSelector((state: RootState) => state.loading.isLoading);
-  const userInfo = getUserInfo();
-
-  useEffect(() => {
-    if (userInfo?.name && userInfo?.id) {
-      socket.auth = { username: userInfo.name, userId: userInfo.id };
-      socket.connect();
-    }
-  }, [userInfo]);
 
   return (
     <div className="app">

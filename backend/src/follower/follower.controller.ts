@@ -25,6 +25,11 @@ export class FollowerController {
   }
 
   @Get("get-follower-users/:id")
+  findAllFollowersUsers(@Param("id") id: string, @Res() response: Response) {
+    return this.followerService.findAllFollowersUsers(+id, response);
+  }
+
+  @Get("get-following-users/:id")
   findAllFollowingUsers(@Param("id") id: string, @Res() response: Response) {
     return this.followerService.findAllFollowingUsers(+id, response);
   }

@@ -60,8 +60,8 @@ function RightSide() {
         </span>
       </div>
       <ul>
-        {followers.map((user) => (
-          <li onClick={openChat}>
+        {followers.map((user, index) => (
+          <li onClick={openChat} key={index}>
             <UserProfile
               userDisplayName={user.name}
               isRounded
