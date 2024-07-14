@@ -33,7 +33,7 @@
     left: 50%;
     transform: translate(-50%, 0);
     top: 460px;
-    z-index: 999;
+    z-index: 9;
 
     width: 960px;
     max-width: 960px;
@@ -108,6 +108,9 @@
           margin-right: 8px;
         }
       }
+    }
+    .postInformMessage {
+      border-radius: 8px;
     }
     .profilePost {
     }

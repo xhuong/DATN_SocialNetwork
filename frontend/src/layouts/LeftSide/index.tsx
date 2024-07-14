@@ -22,6 +22,8 @@ function LeftSide() {
         userDisplayName={userInfo.name}
         image={defaultProfileImage}
         isRounded
+        canNegative
+        idUser={userInfo.id}
       />
       <ul>
         <li>

@@ -16,6 +16,7 @@ export interface ICreatePostBE {
   user_id: number;
   created_date: string;
   isLiked: boolean;
+  feeling?: string;
 }
 
 interface IPostTypes {
@@ -42,6 +43,7 @@ export interface IPayloadGetPostsDto {
 export interface IPayloadCreatePostsDto {
   title: string;
   user_id: number;
+  feeling?: string;
 }
 
 const prefix = "/post";

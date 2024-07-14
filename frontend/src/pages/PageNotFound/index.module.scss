@@ -1,11 +1,20 @@
 .pageNotFound {
   height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  column-gap: 32px;
   justify-content: center;
-  row-gap: 8px;
-}
-.title {
-  font-size: 2.4rem;
+
+  .imageWrapper {
+    width: 560px;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .pageNotFoundInfo {
+    .title {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+    }
+  }
 }

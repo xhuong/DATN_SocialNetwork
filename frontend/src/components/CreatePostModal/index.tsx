@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Col, Form, Input, Modal, Row } from "antd";
 
-import { Form, Input } from "antd";
 import { toast } from "react-toastify";
 
-import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import UserProfile from "@/components/UserProfile";
 
@@ -13,27 +12,50 @@ import { useLazyUploadImagesQuery } from "@/services/UploadImageAPI";
 
 import { getUserInfo } from "@/utils/auth";
 import { closeModal } from "@/redux/slices/modal";
+import { hideLoading, showLoading } from "@/redux/slices/loading";
 import {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
 } from "@/utils/constant";
 
+import styles from "./index.module.scss";
+
 interface ICreatePostModalPropsType {
   isShow: boolean;
   onSuccess: () => void;
+  feeling?: string;
 }
 
-function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
+function CreatePostModal({
+  isShow,
+  onSuccess,
+  feeling,
+}: ICreatePostModalPropsType) {
   const [createPost] = useLazyCreatePostQuery();
   const [uploadImage] = useLazyUploadImagesQuery();
   const userInfo = getUserInfo();
   const dispatch = useDispatch();
 
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [previewImgs, setPreviewImgs] = useState<string[]>([]);
 
   const handleFileChange = (e: any) => {
     setSelectedFiles(e.target.files);
+    if (e.target.files) {
+      const filePreviews: string[] = [];
+      Array.from(e.target.files).forEach((file: any) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          if (reader.result) {
+            filePreviews.push(reader.result as string);
+            if (filePreviews.length === e.target.files.length) {
+              setPreviewImgs(filePreviews);
+            }
+          }
+        };
+      });
+    }
   };
 
   const handleUploadFile = async (post_id: number) => {
@@ -61,12 +83,12 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
         console.error("Error uploading file:", error);
       }
     }
-    setUploadedFiles(uploaded);
   };
 
   const handleSubmitPost = async (value: any) => {
     if (userInfo?.id) {
       try {
+        dispatch(showLoading());
         const postRes: any = await createPost({
           title: value?.postContent,
           user_id: userInfo?.id,
@@ -75,12 +97,14 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
         await handleUploadFile(postRes?.data?.result?.data?.id);
 
         onSuccess();
+        dispatch(hideLoading());
         dispatch(closeModal());
       } catch (error) {
         toast.error("Error when create your post!", {
           autoClose: 2000,
           theme: "light",
         });
+        dispatch(hideLoading());
         dispatch(closeModal());
       }
     } else {
@@ -88,12 +112,24 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
     }
   };
 
+  const onHideModal = () => {
+    dispatch(closeModal());
+    setPreviewImgs([]);
+  };
+
   return (
-    <Modal isShow={isShow} title="Tạo bài viết" isRounded>
+    <Modal
+      open={isShow}
+      onCancel={onHideModal}
+      destroyOnClose
+      footer={null}
+      className={styles.modal}
+    >
       <UserProfile
         image={require("../../assets/images/users/default.png")}
         userDisplayName={userInfo.name}
         isRounded
+        bgGray={false}
       />
       <Form layout="vertical" onFinish={handleSubmitPost}>
         <Form.Item
@@ -111,13 +147,26 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
             style={{ resize: "none", minHeight: "90px", borderRadius: "8px" }}
           />
         </Form.Item>
+
+        {previewImgs.length > 0 && (
+          <Row gutter={[8, 8]} className={styles.previewImgs}>
+            {previewImgs.map((img, index) => (
+              <Col xs={8} key={index}>
+                <div className={styles.previewImg}>
+                  <img src={img} alt="" />
+                </div>
+              </Col>
+            ))}
+          </Row>
+        )}
+
         <div className="uploadImage">
-          <input type="file" multiple onChange={handleFileChange} />
-          {uploadedFiles.map((file: any, index) => (
-            <li key={index}>
-              <img src={file.secure_url} alt={`file-${index}`} width="100" />
-            </li>
-          ))}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+          />
         </div>
         <Button
           btnType="secondary"
@@ -126,7 +175,7 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
           mt12
           htmlType="submit"
         >
-          Đăng
+          Post
         </Button>
       </Form>
     </Modal>

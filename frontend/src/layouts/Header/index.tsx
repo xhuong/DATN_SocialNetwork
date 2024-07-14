@@ -1,3 +1,4 @@
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -12,17 +13,18 @@ import { AiOutlineMessage, AiOutlineSetting } from "react-icons/ai";
 import { IoIosSearch } from "react-icons/io";
 
 import Chat from "@/layouts/ChatLayout/components/Chat";
-import { logOut } from "@/utils/auth";
+import { getUserInfo, logOut } from "@/utils/auth";
 import UserProfile from "@/components/UserProfile";
-import girl from "@/assets/images/users/girl.jpg";
+
+import { openChatModal } from "@/redux/slices/chat";
 
 import styles from "./index.module.scss";
-import { useDispatch } from "react-redux";
-import { openChatModal } from "@/redux/slices/chat";
 
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const userInfo = getUserInfo();
 
   const showChatModal = () => {
     dispatch(openChatModal());
@@ -96,8 +98,9 @@ export default function Header() {
               <div className={styles.headerCardInfo}>
                 <div className={styles.headerCardInfoWrapper}>
                   <UserProfile
-                    image={girl}
-                    userDisplayName="Xuân Hướng"
+                    image={userInfo.image_profile}
+                    userDisplayName={userInfo.name}
+                    idUser={userInfo.id}
                     isRounded
                     bgGray
                     canNegative

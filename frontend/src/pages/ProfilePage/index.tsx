@@ -1,4 +1,6 @@
-import { Col, Row } from "antd";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Alert, Col, Row } from "antd";
 
 import { getUserInfo } from "@/utils/auth";
 import { IUserBE } from "@/utils/common";
@@ -7,8 +9,6 @@ import Header from "@/layouts/Header";
 import PostList from "@/layouts/PostList";
 
 import Button from "@/components/Button";
-
-import defaultAvatar from "@/assets/images/users/default.png";
 
 import {
   FaPlus,
@@ -19,11 +19,45 @@ import {
   TiHome,
 } from "@/pages/constant";
 
+import { useGetProfileInfoQuery } from "@/services/UserAPI";
+import { useCheckFollowedUserQuery } from "@/services/FollowAPI";
+
 import styles from "./index.module.scss";
-import { url } from "inspector";
+import { RiUserUnfollowLine } from "react-icons/ri";
+import EditProfileInfoModal from "@/components/EditProfileInfoModal";
 
 const ProfilePage = () => {
   const userInfo: IUserBE | null = getUserInfo();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+
+  const profileId = Number.parseInt(searchParams.get("id") || "");
+
+  const isSelf = userInfo.id == profileId;
+
+  const { data, isSuccess, isError } = useGetProfileInfoQuery(
+    { userId: profileId },
+    { skip: profileId === null }
+  );
+
+  const { data: isFollowedUser } = useCheckFollowedUserQuery({
+    user_id: userInfo.id,
+    follower_id: profileId,
+  });
+
+  useEffect(() => {
+    if (isError || (!data && isSuccess)) {
+      navigate("/error/404");
+    }
+  }, [data, isError, isSuccess]);
+
+  const onCancel = () => {
+    setShowEditProfileModal(false);
+  };
+  console.log("sds", isSelf);
+
+  console.log("!isSelf && isFollowedUser", !isSelf && isFollowedUser);
 
   return (
     <>
@@ -55,53 +89,79 @@ const ProfilePage = () => {
               <div className={styles.author}>
                 <div className={styles.authorAvatar}>
                   <div className={styles.authorAvatarWrapper}>
-                    <img src={userInfo.image_profile ?? defaultAvatar} alt="" />
+                    <img src={data?.image_profile} alt="" />
                   </div>
-                  <IoIosCamera className={styles.cameraIcon} size={36} />
+                  {isSelf && (
+                    <IoIosCamera className={styles.cameraIcon} size={36} />
+                  )}
                 </div>
                 <div className={styles.authorInfo}>
-                  <h2 className={styles.authorName}>{userInfo.name}</h2>
+                  <h2 className={styles.authorName}>{data?.name}</h2>
                   <p className={styles.followingCount}>689 followers</p>
                 </div>
               </div>
               <ul className={styles.action}>
-                <li>
-                  <Button
-                    btnType="primary"
-                    isRounded
-                    isNonePadding
-                    onClick={() => {}}
-                  >
-                    <FaPlus /> Thêm vào tin
+                {!isSelf && !isFollowedUser && (
+                  <Button btnType="primary" isRounded onClick={() => {}}>
+                    <FaPlus /> Follow
                   </Button>
-                </li>
-                <li>
-                  <Button
-                    btnType="primary"
-                    isRounded
-                    isNonePadding
-                    onClick={() => {}}
-                  >
-                    <IoPencil /> Chỉnh sửa trang cá nhân
-                  </Button>
-                </li>
+                )}
+                {isFollowedUser && (
+                  <>
+                    <Alert
+                      message="Followed"
+                      type="success"
+                      showIcon
+                      style={{ borderRadius: "8px" }}
+                    />
+                    <Button btnType="primary" isRounded onClick={() => {}}>
+                      <RiUserUnfollowLine /> Unfollow
+                    </Button>
+                  </>
+                )}
+                {isSelf && (
+                  <li>
+                    <Button
+                      btnType="primary"
+                      isRounded
+                      isNonePadding
+                      onClick={() => {}}
+                    >
+                      <FaPlus /> Thêm vào tin
+                    </Button>
+                  </li>
+                )}
+                {isSelf && (
+                  <li>
+                    <Button
+                      btnType="primary"
+                      isRounded
+                      isNonePadding
+                      onClick={() => setShowEditProfileModal(true)}
+                    >
+                      <IoPencil /> Chỉnh sửa trang cá nhân
+                    </Button>
+                  </li>
+                )}
               </ul>
             </div>
             <div className={styles.body}>
               <Row gutter={{ xs: 16, md: 16 }}>
-                <Col xs={8}>
+                <Col xs={8} style={{ marginTop: "40px" }}>
                   <div className={styles.introduce}>
                     <p className={styles.title}>Giới thiệu</p>
-                    <Button
-                      btnType="secondary"
-                      isRounded
-                      isFullWidth
-                      isNonePadding
-                      onClick={() => {}}
-                      style={{ marginBottom: "8px" }}
-                    >
-                      Thêm tiểu sử
-                    </Button>
+                    {isSelf && (
+                      <Button
+                        btnType="secondary"
+                        isRounded
+                        isFullWidth
+                        isNonePadding
+                        onClick={() => {}}
+                        style={{ marginBottom: "8px" }}
+                      >
+                        Thêm tiểu sử
+                      </Button>
+                    )}
                     <ul className={styles.introduceList}>
                       <li className={styles.introduceItem}>
                         <IoSchool className={styles.icon} />
@@ -122,35 +182,55 @@ const ProfilePage = () => {
                         </span>
                       </li>
                     </ul>
-                    <Button
-                      btnType="secondary"
-                      isRounded
-                      isFullWidth
-                      isNonePadding
-                      onClick={() => {}}
-                      style={{ marginBottom: "8px" }}
-                    >
-                      Chỉnh sửa chi tiết
-                    </Button>
-                    <Button
-                      btnType="secondary"
-                      isRounded
-                      isFullWidth
-                      isNonePadding
-                      onClick={() => {}}
-                    >
-                      Thêm nội dung đáng chú ý
-                    </Button>
+                    {isSelf && (
+                      <>
+                        <Button
+                          btnType="secondary"
+                          isRounded
+                          isFullWidth
+                          isNonePadding
+                          onClick={() => {}}
+                          style={{ marginBottom: "8px" }}
+                        >
+                          Chỉnh sửa chi tiết
+                        </Button>
+                        <Button
+                          btnType="secondary"
+                          isRounded
+                          isFullWidth
+                          isNonePadding
+                          onClick={() => {}}
+                        >
+                          Thêm nội dung đáng chú ý
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </Col>
                 <Col xs={16}>
-                  <PostList />
+                  {!isSelf && !isFollowedUser && (
+                    <Alert
+                      message="Hey you"
+                      description="You can't seeing posts cause you haven't followed this user yet."
+                      type="info"
+                      showIcon
+                      className={styles.postInformMessage}
+                    />
+                  )}
+                  {/* {(isSelf || (!isSelf && isFollowedUser)) && (
+                    <PostList userId={userInfo.id} isSelf={isSelf} />
+                  )} */}
                 </Col>
               </Row>
             </div>
           </div>
         </div>
       </div>
+      <EditProfileInfoModal
+        isShow={showEditProfileModal}
+        userId={userInfo.id}
+        onCancel={onCancel}
+      />
     </>
   );
 };

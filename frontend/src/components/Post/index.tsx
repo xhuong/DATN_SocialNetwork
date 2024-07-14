@@ -39,6 +39,7 @@ function Post({ post }: { post: IPostFE }) {
     id,
     user,
     isLiked,
+    feeling,
   } = post;
   const {
     handleLikeAPost,
@@ -60,10 +61,17 @@ function Post({ post }: { post: IPostFE }) {
         <div className={styles.postHeader}>
           <div className={styles.postAuthor}>
             <div className={styles.postAuthorImage}>
-              <img src={require("../../assets/images/users/boy.jpg")} alt="" />
+              <img src={user.imageProfile} alt={user.userDisplayName} />
             </div>
             <div className={styles.postAuthorInfo}>
-              <p className={styles.postAuthorName}>{user?.userDisplayName}</p>
+              <div className={styles.postAuthNameWrapper}>
+                <p className={styles.postAuthorName}>{user?.userDisplayName}</p>
+                {feeling && (
+                  <p className={styles.postAuthFeeling}>
+                    Đang cảm thấy <b>{feeling}</b>
+                  </p>
+                )}
+              </div>
               <div className={styles.postTime}>
                 <span className={styles.postHeaderDate}>
                   {calculateTime(new Date(createdDate))} hours ago
@@ -78,45 +86,33 @@ function Post({ post }: { post: IPostFE }) {
         </div>
         <div className={styles.postBody}>
           <p className={styles.postTitle}>{title}</p>
-          {/* <ul className={styles.postImages}>
-          <li className={styles.postImageItem}>
-            <img src={require("../../assets/images/users/girl.jpg")} alt="" />
-          </li>
-        </ul> */}
           {/* user upload 4 image  */}
-          {/* <Row gutter={[8, 8]} className={styles.postImages}>
-          <Col xl={24} md={12}>
-            <div className={styles.postImageItem}>
-              <img src={require("../../assets/images/users/girl.jpg")} alt="" />
-            </div>
-          </Col>
-          <Col xl={8} md={12}>
-            <div className={styles.postImageItem}>
-              <img src={require("../../assets/images/users/girl.jpg")} alt="" />
-            </div>
-          </Col>
-          <Col xl={8} md={12}>
-            <div className={styles.postImageItem}>
-              <img src={require("../../assets/images/users/girl.jpg")} alt="" />
-            </div>
-          </Col>
-          <Col xl={8} md={12}>
-            <div className={styles.postImageItem}>
-              <img src={require("../../assets/images/users/girl.jpg")} alt="" />
-            </div>
-          </Col>
-        </Row> */}
+          {images.length > 1 && (
+            <Row gutter={[8, 8]} className={styles.postImages}>
+              {images.map((image) => (
+                <Col xs={12}>
+                  <div className={styles.postImageItem}>
+                    <img src={image.image_url} alt="" />
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          )}
 
           {/* user upload 1 image  */}
-          {images?.map((image) => (
-            <Row gutter={[8, 8]} className={styles.postImages} key={image.id}>
+          {images.length === 1 && (
+            <Row
+              gutter={[8, 8]}
+              className={styles.postImages}
+              key={images[0].id}
+            >
               <Col xl={24} md={12}>
                 <div className={styles.postImageItem}>
-                  <img src={image.image_url} alt="" />
+                  <img src={images[0].image_url} alt="" />
                 </div>
               </Col>
             </Row>
-          ))}
+          )}
         </div>
         <div className={styles.postFooter}>
           <div className={styles.postFooterInfo}>

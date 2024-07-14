@@ -9,6 +9,7 @@ interface IUserProfilePropsType {
   bgGray?: boolean;
   canNegative?: boolean;
   borderBottom?: boolean;
+  idUser?: number;
 }
 
 function UserProfile({
@@ -19,6 +20,7 @@ function UserProfile({
   bgGray,
   canNegative,
   borderBottom,
+  idUser,
 }: IUserProfilePropsType) {
   const navigate = useNavigate();
   return (
@@ -29,7 +31,7 @@ function UserProfile({
       ${borderBottom ? styles.borderBottom : ""}
       `}
       onClick={() => {
-        if (canNegative) navigate("/profile");
+        if (canNegative) navigate(`/profile?id=${idUser}`);
       }}
     >
       <div

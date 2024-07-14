@@ -52,6 +52,17 @@ export const FollowAPI = createApi({
         };
       },
     }),
+    checkFollowedUser: builder.query<
+      IOnFollowUserResponseType,
+      IFollowUserPayload
+    >({
+      query: (payload) => ({
+        url: `${BASE_URL}/check-followed-user`,
+        body: payload,
+        method: "POST",
+      }),
+      transformResponse: (res: any) => res.result.data,
+    }),
   }),
 });
 
@@ -61,4 +72,5 @@ export const {
   useLazyFollowUserQuery,
   useLazyUnfollowUserQuery,
   useLazyGetFollowingUsersQuery,
+  useCheckFollowedUserQuery,
 } = FollowAPI;

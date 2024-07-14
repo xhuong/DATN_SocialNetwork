@@ -5,6 +5,7 @@ import { CreateFollowerDto } from "./dto/create-follower.dto";
 import { UnfollowUserDto } from "./dto/unfollow-user.dto";
 
 import { PrismaService } from "src/prisma/prisma.service";
+import { CheckIsFollowedUserDto } from "./dto/unfollow-user.dto copy";
 
 @Injectable()
 export class FollowerService {
@@ -225,6 +226,34 @@ export class FollowerService {
       return {
         status: 400,
         message: "Unfollow user failed!",
+      };
+    }
+  }
+
+  async checkFollowedUser(
+    checkFollowedUserDto: CreateFollowerDto,
+    response: Response,
+  ) {
+    try {
+      const { user_id, follower_id } = checkFollowedUserDto;
+      const data = await this.prisma.follower.findFirst({
+        where: {
+          user_id: follower_id,
+          follower_id: user_id,
+        },
+      });
+
+      return response.status(200).json({
+        status: 200,
+        message: `user ${follower_id} ${data ? "has" : "has not"} followed user ${user_id}`,
+        result: {
+          data: data ? true : false,
+        },
+      });
+    } catch (error) {
+      return {
+        status: 400,
+        message: "check followed user failed!",
       };
     }
   }

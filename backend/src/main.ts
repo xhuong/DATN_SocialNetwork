@@ -104,7 +104,7 @@ async function bootstrap() {
   app.useWebSocketAdapter(new CustomIoAdapter(app));
   app.enableCors({
     origin: "*",
-    methods: "GET, PUT, POST, DELETE",
+    methods: "GET, PUT, POST, DELETE, PATCH",
     allowedHeaders: "*",
   });
   app.useGlobalPipes(new ValidationPipe());

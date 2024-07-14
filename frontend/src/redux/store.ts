@@ -8,6 +8,7 @@ import { AuthenticationAPI } from "@/services/AuthenticationAPI";
 import { FollowAPI } from "@/services/FollowAPI";
 import { ChatAPI } from "@/services/ChatAPI";
 import { RecommendAPI } from "@/services/RecommendAPI";
+import { UserAPI } from "@/services/UserAPI";
 
 import loading from "@/redux/slices/loading";
 import modal from "@/redux/slices/modal";
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   [FollowAPI.reducerPath]: FollowAPI.reducer,
   [ChatAPI.reducerPath]: ChatAPI.reducer,
   [RecommendAPI.reducerPath]: RecommendAPI.reducer,
+  [UserAPI.reducerPath]: UserAPI.reducer,
 });
 
 const store = configureStore({
@@ -36,7 +38,8 @@ const store = configureStore({
       .concat(CommentAPI.middleware)
       .concat(FollowAPI.middleware)
       .concat(ChatAPI.middleware)
-      .concat(RecommendAPI.middleware),
+      .concat(RecommendAPI.middleware)
+      .concat(UserAPI.middleware),
 });
 
 setupListeners(store.dispatch);

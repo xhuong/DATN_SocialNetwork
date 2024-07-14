@@ -42,7 +42,11 @@ function YourThink() {
       </div>
       <ul className={styles.yourThinkFooter}>
         {YOUR_THINK_ITEMS?.map((item, index) => (
-          <li className={styles.yourThinkFooterAction} key={index}>
+          <li
+            className={styles.yourThinkFooterAction}
+            key={index}
+            onClick={() => dispatch(openModal())}
+          >
             <div className={styles.yourThinkFooterImage}>
               <img src={item.imgURL} alt="" />
             </div>

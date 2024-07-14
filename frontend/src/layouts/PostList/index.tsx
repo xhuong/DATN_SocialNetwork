@@ -43,7 +43,7 @@ export const PostListContext = createContext<IPostListProvider>({
   userInfo: defaultUserInfo,
 });
 
-function PostList() {
+function PostList({ userId, isSelf }: { userId: number; isSelf: boolean }) {
   const [postList, setPostList] = useState<IPostFE[]>([]);
   const isShowCreatePostModal = useSelector(
     (state: RootState) => state?.modal.isShow
@@ -53,7 +53,7 @@ function PostList() {
 
   const { data, isSuccess } = useGetPostListByUserIdQuery(
     {
-      id_user: userInfo.id,
+      id_user: userId,
     },
     { refetchOnMountOrArgChange: true }
   );
@@ -111,8 +111,12 @@ function PostList() {
   return (
     <PostListContext.Provider value={{ ...defaultValue }}>
       <div className={styles.postList}>
-        <YourThink />
-        <FollowCardList />
+        {isSelf && (
+          <>
+            <YourThink />
+            <FollowCardList />
+          </>
+        )}
         {postList?.map((post) => {
           return (
             <React.Fragment key={post.id}>

@@ -47,6 +47,8 @@ function RightSide() {
         userDisplayName={userInfo.name}
         image={defaultProfileImage}
         isRounded
+        canNegative
+        idUser={userInfo.id}
       />
       <div className={styles.contactUser}>
         <span>Người liên hệ</span>
@@ -67,6 +69,8 @@ function RightSide() {
               isRounded
               image={user.imageUrl}
               isActive
+              canNegative
+              idUser={user.id}
             />
           </li>
         ))}

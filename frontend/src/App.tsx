@@ -14,8 +14,6 @@ import ProfilePage from "@/pages/ProfilePage";
 import PageNotFound from "@/pages/PageNotFound";
 
 import Loading from "@/components/Loading";
-import { getUserInfo } from "@/utils/auth";
-import socket from "@/layouts/ChatLayout/components/socket";
 
 function App() {
   const isLoading = useSelector((state: RootState) => state.loading.isLoading);
@@ -52,6 +50,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="*" element={<PageNotFound />} />
+            <Route path="/error/404" element={<PageNotFound />} />
           </Routes>
         </Router>
         <ToastContainer />

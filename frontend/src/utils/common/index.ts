@@ -41,6 +41,7 @@ export interface IPostBE {
   Images: IImageBE[] | [];
   Like: ILikeBE[] | [];
   isLiked: boolean;
+  feeling?: string;
 }
 
 export interface IImageBE {
@@ -54,6 +55,7 @@ export interface IPostFE {
   user: {
     id: number;
     userDisplayName: string;
+    imageProfile: string;
   };
   createdDate: string;
   title: string;
@@ -64,6 +66,7 @@ export interface IPostFE {
   shareCount: number;
   comments: ICommentFE[] | [];
   isLiked: boolean;
+  feeling?: string;
 }
 
 export type ICommentFE = {
@@ -198,9 +201,11 @@ export const mapPostListBEToPostListUI = (posts: IPostBE[]): IPostFE[] => {
   return posts.map((post) => ({
     id: post.id,
     title: post.title,
+    feeling: post.feeling,
     user: {
       id: post.user.id,
       userDisplayName: post.user.name,
+      imageProfile: post.user.image_profile,
     },
     // comments: mapCommentBEToCommentUI(post.Comment),
     comments: mapCommentBEToCommentUI(nestComments(post.Comment)),

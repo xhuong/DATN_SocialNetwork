@@ -4,8 +4,9 @@ import { CiCircleRemove } from "react-icons/ci";
 import styles from "./index.module.scss";
 import { useDispatch } from "react-redux";
 import { closeModal } from "@/redux/slices/modal";
+import { ModalProps } from "antd";
 
-interface IModalProps {
+interface IModalProps extends ModalProps {
   isShow: boolean;
   children: ReactNode;
   title: string;

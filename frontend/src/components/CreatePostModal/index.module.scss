@@ -7,3 +7,17 @@
   height: 120px;
   max-height: 120px;
 }
+.modal {
+  :global(.ant-modal-content) {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .previewImgs {
+    align-items: center;
+    margin-bottom: 12px;
+    .previewImg {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  }
+}

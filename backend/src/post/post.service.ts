@@ -143,6 +143,7 @@ export class PostService {
 
   async getPostsByUserId(getPostDto: GetPostsDto, res: Response) {
     try {
+      // get list user followed me
       const followedUserIds = await this.prisma.follower.findMany({
         where: {
           follower_id: getPostDto.id_user,
@@ -152,6 +153,7 @@ export class PostService {
         },
       });
 
+      // get the ids
       const ids = followedUserIds.map((obj) => obj.user_id);
 
       const selectUser = {
@@ -161,6 +163,7 @@ export class PostService {
         image_profile: true,
       };
 
+      // find all post
       const posts = await this.prisma.post.findMany({
         where: {
           user_id: {

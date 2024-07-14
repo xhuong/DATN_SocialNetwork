@@ -11,6 +11,7 @@ import { FollowerService } from "./follower.service";
 import { CreateFollowerDto } from "./dto/create-follower.dto";
 import { Response } from "express";
 import { UnfollowUserDto } from "./dto/unfollow-user.dto";
+import { CheckIsFollowedUserDto } from "./dto/unfollow-user.dto copy";
 
 @Controller("follower")
 export class FollowerController {
@@ -27,6 +28,16 @@ export class FollowerController {
   @Get("get-follower-users/:id")
   findAllFollowersUsers(@Param("id") id: string, @Res() response: Response) {
     return this.followerService.findAllFollowersUsers(+id, response);
+  }
+  @Post("check-followed-user")
+  checkFollowedUser(
+    @Body() checkIsFollowedUser: CreateFollowerDto,
+    @Res() response: Response,
+  ) {
+    return this.followerService.checkFollowedUser(
+      checkIsFollowedUser,
+      response,
+    );
   }
 
   @Get("get-following-users/:id")

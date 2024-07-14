@@ -3,6 +3,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { Response } from "express";
 import { PrismaService } from "src/prisma/prisma.service";
+import { UpdateProfileInfoDto } from "./dto/update-profile.dto";
 
 @Injectable()
 export class UsersService {
@@ -105,56 +106,56 @@ export class UsersService {
     }
   }
 
-  // async getServicesAndPrescriptionOfMedicalExaminationByPatientById(
-  //   idUser: number,
-  //   response: Response,
-  // ) {
-  //   try {
-  //     const data = await this.prisma.medicalRecord.findFirst({
-  //       where: {
-  //         id_patient: idUser,
-  //       },
-  //       include: {
-  //         patient: true,
-  //         MedicalExamination: {
-  //           include: {
-  //             ServiceRelMedicalExamination: {
-  //               include: {
-  //                 service: true,
-  //               },
-  //             },
-  //             Prescription: {
-  //               include: {
-  //                 PrescriptionRelMedical: {
-  //                   include: {
-  //                     medical: true,
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  //     if (!Object.is(data, null)) {
-  //       return response.status(200).json({
-  //         status: 200,
-  //         message: `view history medical examination of user ${data.patient.id_user} successfully`,
-  //         result: {
-  //           data,
-  //         },
-  //       });
-  //     } else {
-  //       return response.status(200).json({
-  //         status: 200,
-  //         message: `The patient with id = ${idUser} not found`,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     return response.status(400).json({
-  //       status: 400,
-  //       message: error,
-  //     });
-  //   }
-  // }
+  async getProfileInfo(userId: number, response: Response) {
+    try {
+      const data = await this.prisma.user.findFirst({
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+          address: true,
+          phone_number: true,
+          image_profile: true,
+        },
+      });
+      return response.status(200).json({
+        status: 200,
+        message: `Get userInfo with id = ${userId} successfully`,
+        result: {
+          data,
+        },
+      });
+    } catch {
+      return {
+        status: 400,
+        message: `Get userInfo with id = ${userId} failed`,
+      };
+    }
+  }
+
+  async updateProfileInfo(
+    id: number,
+    updateProfileInfo: UpdateProfileInfoDto,
+    response: Response,
+  ) {
+    try {
+      const data = await this.prisma.user.update({
+        where: { id },
+        data: updateProfileInfo,
+      });
+
+      return response.status(200).json({
+        status: 200,
+        message: `Update profile info with id ${id} successfully`,
+        result: {
+          data,
+        },
+      });
+    } catch {
+      return {
+        status: 400,
+        message: `Update profile info with id ${id} failed`,
+      };
+    }
+  }
 }

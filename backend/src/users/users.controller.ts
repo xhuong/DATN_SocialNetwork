@@ -17,13 +17,14 @@ import { Response } from "express";
 import { Role } from "src/common/roles";
 import { Roles } from "src/common/roles/roles.decorator";
 import { RolesGuard } from "src/common/roles/roles.guard";
+import { UpdateProfileInfoDto } from "./dto/update-profile.dto";
 
 @Controller("user")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(AuthGuard, RolesGuard)
+  // @Roles(Role.ADMIN)
   @Post()
   findOne(@Body("user_name") userName: string, @Res() response: Response) {
     return this.usersService.findOne(userName, response);
@@ -43,6 +44,11 @@ export class UsersController {
     return this.usersService.findAll(response);
   }
 
+  @Get("get-profile-info/:id")
+  getProfileInfo(@Param("id") id: string, @Res() response: Response) {
+    return this.usersService.getProfileInfo(+id, response);
+  }
+
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Patch(":id")
@@ -59,5 +65,18 @@ export class UsersController {
   @Delete(":id")
   remove(@Param("id") id: string, @Res() response: Response) {
     return this.usersService.remove(+id, response);
+  }
+
+  @Patch("/update-profile-info/:id")
+  updateProfileInfoDto(
+    @Param("id") id: string,
+    @Body() updateProfileInfoDto: UpdateProfileInfoDto,
+    @Res() response: Response,
+  ) {
+    return this.usersService.updateProfileInfo(
+      +id,
+      updateProfileInfoDto,
+      response,
+    );
   }
 }

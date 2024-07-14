@@ -50,6 +50,7 @@ model Post {
   Like         Like[]
   Comment      Comment[]
   isLiked      Boolean   @default(false)
+  feeling      String?
 }
 
 model Images {
