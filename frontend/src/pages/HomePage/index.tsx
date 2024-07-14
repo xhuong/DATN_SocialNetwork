@@ -8,7 +8,16 @@ const HomePage = () => {
   return (
     <>
       <Header />
-      <MainLayout children={<PostList userId={userInfo.id} isSelf />} />
+      <MainLayout
+        children={
+          <PostList
+            userId={userInfo.id}
+            is_includes_posts_of_following_users={true}
+            id_user_viewing={userInfo.id}
+            isSelf
+          />
+        }
+      />
     </>
   );
 };

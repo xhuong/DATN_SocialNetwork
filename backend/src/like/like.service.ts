@@ -57,7 +57,7 @@ export class LikeService {
 
       return response.status(200).json({
         status: 200,
-        message: `user ${user_id} liked ${post_id} successfully`,
+        message: `user ${user_id} disliked ${post_id} successfully`,
         result: {
           data,
         },
@@ -65,7 +65,7 @@ export class LikeService {
     } catch (error) {
       return {
         status: 400,
-        message: `user ${user_id} liked ${post_id} failed`,
+        message: `user ${user_id} disliked ${post_id} failed`,
       };
     }
   }

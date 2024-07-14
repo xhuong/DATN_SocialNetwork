@@ -38,6 +38,8 @@ export interface IPayloadSearchBookDto {
 
 export interface IPayloadGetPostsDto {
   id_user: number;
+  id_user_viewing: number;
+  is_includes_posts_of_following_users: boolean;
 }
 
 export interface IPayloadCreatePostsDto {

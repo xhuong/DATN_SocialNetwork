@@ -34,6 +34,8 @@ export interface IPostListProvider {
   handleDislikeAPost: (userId: number, postId: number) => void;
   handleComment: (comment: IAddNewCommentDto) => void;
   userInfo: IUserBE;
+  userId: number;
+  id_user_viewing: number;
 }
 
 export const PostListContext = createContext<IPostListProvider>({
@@ -41,9 +43,21 @@ export const PostListContext = createContext<IPostListProvider>({
   handleDislikeAPost: (userId: number, postId: number) => {},
   handleComment: (comment: IAddNewCommentDto) => {},
   userInfo: defaultUserInfo,
+  userId: -1,
+  id_user_viewing: -1,
 });
 
-function PostList({ userId, isSelf }: { userId: number; isSelf: boolean }) {
+function PostList({
+  userId,
+  id_user_viewing,
+  is_includes_posts_of_following_users,
+  isSelf,
+}: {
+  userId: number;
+  id_user_viewing: number;
+  is_includes_posts_of_following_users: boolean;
+  isSelf: boolean;
+}) {
   const [postList, setPostList] = useState<IPostFE[]>([]);
   const isShowCreatePostModal = useSelector(
     (state: RootState) => state?.modal.isShow
@@ -51,14 +65,7 @@ function PostList({ userId, isSelf }: { userId: number; isSelf: boolean }) {
 
   const userInfo: IUserBE | null = getUserInfo();
 
-  const { data, isSuccess } = useGetPostListByUserIdQuery(
-    {
-      id_user: userId,
-    },
-    { refetchOnMountOrArgChange: true }
-  );
-
-  const [getPostList] = useLazyGetPostListByUserIdQuery();
+  const [getPostList, { data, isSuccess }] = useLazyGetPostListByUserIdQuery();
 
   const [likeAPost] = useLazyLikeAPostQuery();
 
@@ -66,23 +73,35 @@ function PostList({ userId, isSelf }: { userId: number; isSelf: boolean }) {
 
   const [addNewComment] = useLazyAddNewCommentQuery();
 
-  const handleLikeAPost = (userId: number, postId: number) => {
+  const handleLikeAPost = async (userId: number, postId: number) => {
     if (userId && postId) {
-      likeAPost({ post_id: postId, user_id: userId });
-      getPostList({ id_user: userInfo.id });
+      await likeAPost({ post_id: postId, user_id: id_user_viewing });
+      await getPostList({
+        id_user: userId,
+        id_user_viewing: userInfo.id,
+        is_includes_posts_of_following_users,
+      });
     }
   };
 
-  const handleDislikeAPost = (userId: number, postId: number) => {
+  const handleDislikeAPost = async (userId: number, postId: number) => {
     if (userId && postId) {
-      dislikeAPost({ post_id: postId, user_id: userId });
-      getPostList({ id_user: userInfo.id });
+      await dislikeAPost({ post_id: postId, user_id: id_user_viewing });
+      await getPostList({
+        id_user: userId,
+        id_user_viewing: userInfo.id,
+        is_includes_posts_of_following_users,
+      });
     }
   };
 
-  const handleComment = (comment: IAddNewCommentDto) => {
-    addNewComment(comment);
-    getPostList({ id_user: userInfo.id });
+  const handleComment = async (comment: IAddNewCommentDto) => {
+    await addNewComment(comment);
+    await getPostList({
+      id_user: userId,
+      id_user_viewing: userInfo.id,
+      is_includes_posts_of_following_users,
+    });
   };
 
   const onCreatePostSuccess = () => {
@@ -90,22 +109,36 @@ function PostList({ userId, isSelf }: { userId: number; isSelf: boolean }) {
       autoClose: 2000,
       theme: "light",
     });
-    getPostList({ id_user: userInfo.id });
+    getPostList({
+      id_user: userId,
+      id_user_viewing: userInfo.id,
+      is_includes_posts_of_following_users,
+    });
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (data && isSuccess) {
       const { data: res } = data?.result;
       const convertedData = mapPostListBEToPostListUI(res);
       setPostList(convertedData);
     }
   }, [data, isSuccess]);
 
+  useEffect(() => {
+    getPostList({
+      id_user: userId,
+      id_user_viewing: userInfo.id,
+      is_includes_posts_of_following_users,
+    });
+  }, []);
+
   const defaultValue = {
     handleLikeAPost,
     handleDislikeAPost,
     handleComment,
     userInfo,
+    id_user_viewing,
+    userId,
   };
 
   return (

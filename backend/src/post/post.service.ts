@@ -135,26 +135,83 @@ export class PostService {
     }
   }
 
-  // ---  get posts of users that current user followed them ---
+  // async getPostsByUserId(getPostDto: GetPostsDto, res: Response) {
+  //   try {
+  //     // lấy danh sách id những người mà tôi đã follow
+  //     const followedUserIds = await this.prisma.follower.findMany({
+  //       where: {
+  //         follower_id: getPostDto.id_user,
+  //       },
+  //       select: {
+  //         user_id: true,
+  //       },
+  //     });
 
-  // give the current_user_id for this api
-  // find all user that current user is followed => ids
-  // get all posts of user list from ids => return
+  //     const ids = followedUserIds.map((obj) => obj.user_id);
+
+  //     const selectUser = {
+  //       id: true,
+  //       name: true,
+  //       address: true,
+  //       image_profile: true,
+  //     };
+
+  //     // lấy những bài post của tôi và của những người mà tôi đã follow
+  //     const posts = await this.prisma.post.findMany({
+  //       where: {
+  //         user_id: {
+  //           in: [...ids, getPostDto.id_user],
+  //         },
+  //       },
+  //       orderBy: { created_date: "desc" },
+  //       include: {
+  //         user: {
+  //           select: selectUser,
+  //         },
+  //         Comment: {
+  //           include: {
+  //             user: {
+  //               select: selectUser,
+  //             },
+  //           },
+  //         },
+  //         Images: true,
+  //         Like: {
+  //           include: {
+  //             user: {
+  //               select: selectUser,
+  //             },
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     // kiểm tra xem tôi đã like bài viết đó hay chưa
+  //     const clonePosts = posts.map((post) => ({
+  //       ...post,
+  //       isLiked: post?.Like.some((like) => like.user_id === getPostDto.id_user),
+  //     }));
+
+  //     return res.status(200).json({
+  //       status: 200,
+  //       message: `Get all posts with userId = ${getPostDto.id_user} successfully`,
+  //       result: {
+  //         data: clonePosts,
+  //       },
+  //     });
+  //   } catch {
+  //     return {
+  //       status: 400,
+  //       message: `Get all posts with userId = ${getPostDto.id_user} failed`,
+  //     };
+  //   }
+  // }
 
   async getPostsByUserId(getPostDto: GetPostsDto, res: Response) {
     try {
-      // get list user followed me
-      const followedUserIds = await this.prisma.follower.findMany({
-        where: {
-          follower_id: getPostDto.id_user,
-        },
-        select: {
-          user_id: true,
-        },
-      });
-
-      // get the ids
-      const ids = followedUserIds.map((obj) => obj.user_id);
+      let posts = [];
+      const { id_user, id_user_viewing, is_includes_posts_of_following_users } =
+        getPostDto;
 
       const selectUser = {
         id: true,
@@ -163,39 +220,113 @@ export class PostService {
         image_profile: true,
       };
 
-      // find all post
-      const posts = await this.prisma.post.findMany({
-        where: {
-          user_id: {
-            in: [...ids, getPostDto.id_user],
-          },
-        },
-        orderBy: { created_date: "desc" },
-        include: {
-          user: {
-            select: selectUser,
-          },
-          Comment: {
-            include: {
-              user: {
-                select: selectUser,
+      // khi bạn đang xem bài post của người khác (khi xem trang profile của họ)
+      // chỉ hiển thị những bài post của người đó
+      if (id_user_viewing !== id_user) {
+        // nếu bạn muốn xem bài post của những người mà người đó đang follow
+        // lấy tất cả id của những người mà người đó đang follow
+        let ids: number[] = [];
+        if (is_includes_posts_of_following_users) {
+          ids = await this.prisma.follower
+            .findMany({
+              where: {
+                follower_id: id_user,
               },
-            },
-          },
-          Images: true,
-          Like: {
-            include: {
-              user: {
-                select: selectUser,
+              select: {
+                user_id: true,
               },
-            },
-          },
-        },
-      });
+            })
+            .then((followingUsers) =>
+              followingUsers.map((user) => user.user_id),
+            );
+        }
 
+        const data = await this.prisma.post.findMany({
+          where: {
+            user_id: {
+              in: [...ids, id_user],
+            },
+          },
+          orderBy: { created_date: "desc" },
+          include: {
+            user: {
+              select: selectUser,
+            },
+            Comment: {
+              include: {
+                user: {
+                  select: selectUser,
+                },
+              },
+            },
+            Images: true,
+            Like: {
+              include: {
+                user: {
+                  select: selectUser,
+                },
+              },
+            },
+          },
+        });
+        posts = data;
+      }
+      // bạn đang xem bài post của chính mình
+      else if (id_user_viewing === id_user) {
+        // lấy tất cả id của những người mà tôi đã follow
+        let ids: number[] = [];
+        // nếu bạn muốn xem bài post của những người mà bạn đang follow
+        if (is_includes_posts_of_following_users) {
+          ids = await this.prisma.follower
+            .findMany({
+              where: {
+                follower_id: id_user,
+              },
+              select: {
+                user_id: true,
+              },
+            })
+            .then((followingUsers) =>
+              followingUsers.map((user) => user.user_id),
+            );
+        }
+
+        // lấy những bài post của tôi và của những người mà tôi đã follow
+        const data = await this.prisma.post.findMany({
+          where: {
+            user_id: {
+              in: [...ids, getPostDto.id_user],
+            },
+          },
+          orderBy: { created_date: "desc" },
+          include: {
+            user: {
+              select: selectUser,
+            },
+            Comment: {
+              include: {
+                user: {
+                  select: selectUser,
+                },
+              },
+            },
+            Images: true,
+            Like: {
+              include: {
+                user: {
+                  select: selectUser,
+                },
+              },
+            },
+          },
+        });
+        posts = data;
+      }
+
+      // kiểm tra xem tôi đã like bài viết đó hay chưa
       const clonePosts = posts.map((post) => ({
         ...post,
-        isLiked: post?.Like.some((like) => like.user_id === getPostDto.id_user),
+        isLiked: post?.Like.some((like) => like.user_id === id_user_viewing),
       }));
 
       return res.status(200).json({

@@ -45,7 +45,7 @@ function Post({ post }: { post: IPostFE }) {
     handleLikeAPost,
     handleDislikeAPost,
     handleComment,
-    userInfo,
+    userId,
   }: IPostListProvider = useContext(PostListContext);
 
   const [replyComment, setReplyComment] = useState<ICommentFE | null>();
@@ -141,8 +141,8 @@ function Post({ post }: { post: IPostFE }) {
                 className={styles.postFooterActionItem}
                 onClick={() => {
                   isLiked
-                    ? handleDislikeAPost(userInfo?.id, id)
-                    : handleLikeAPost(userInfo?.id, id);
+                    ? handleDislikeAPost(userId, id)
+                    : handleLikeAPost(userId, id);
                 }}
               >
                 <span>

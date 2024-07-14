@@ -217,9 +217,14 @@ const ProfilePage = () => {
                       className={styles.postInformMessage}
                     />
                   )}
-                  {/* {(isSelf || (!isSelf && isFollowedUser)) && (
-                    <PostList userId={userInfo.id} isSelf={isSelf} />
-                  )} */}
+                  {(isSelf || (!isSelf && isFollowedUser)) && (
+                    <PostList
+                      userId={isSelf ? userInfo.id : profileId}
+                      id_user_viewing={userInfo.id}
+                      is_includes_posts_of_following_users={false}
+                      isSelf={isSelf}
+                    />
+                  )}
                 </Col>
               </Row>
             </div>
