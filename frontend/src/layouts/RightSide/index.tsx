@@ -16,25 +16,26 @@ import {
   IFollowUserFEOmitAddress,
   mapUserFollowBEToUserFollowFEWithouAddress,
 } from "@/utils/follow";
+
 import styles from "./index.module.scss";
 
 function RightSide() {
   const userInfo: IUserBE = getUserInfo();
-  const [getFollowerUsers, { data, isSuccess }] =
-    useLazyGetFollowerUsersQuery();
+  const [getFollowerUsers, { data, isSuccess }] = useLazyGetFollowerUsersQuery({
+    selectFromResult: ({ data, isSuccess }) => ({
+      data: data?.result.data,
+      isSuccess,
+    }),
+  });
   const [followers, setFollowers] = useState<IFollowUserFEOmitAddress[]>([]);
 
   useEffect(() => {
-    if (userInfo.id) {
-      getFollowerUsers({ id: userInfo.id });
-    }
+    userInfo.id && getFollowerUsers({ id: userInfo.id });
   }, []);
 
   useEffect(() => {
     if (data && isSuccess) {
-      const convertedData = mapUserFollowBEToUserFollowFEWithouAddress(
-        data.result.data
-      );
+      const convertedData = mapUserFollowBEToUserFollowFEWithouAddress(data);
       setFollowers(convertedData);
     }
   }, [data]);
@@ -51,7 +52,7 @@ function RightSide() {
         idUser={userInfo.id}
       />
       <div className={styles.contactUser}>
-        <span>Người liên hệ</span>
+        <span>Contact users:</span>
         <span className={styles.contactUserAction}>
           <span className={styles.searchUserIcon}>
             <IoSearchOutline />

@@ -83,20 +83,20 @@ function RecommendLayout() {
   const handleLikeAPost = (userId: number, postId: number) => {
     if (userId && postId) {
       likeAPost({ post_id: postId, user_id: userId });
-      getPostList({ id_user: userInfo.id });
+      // getPostList({ id_user: userInfo.id });
     }
   };
 
   const handleDislikeAPost = (userId: number, postId: number) => {
     if (userId && postId) {
       dislikeAPost({ post_id: postId, user_id: userId });
-      getPostList({ id_user: userInfo.id });
+      // getPostList({ id_user: userInfo.id });
     }
   };
 
   const handleComment = (comment: IAddNewCommentDto) => {
     addNewComment(comment);
-    getPostList({ id_user: userInfo.id });
+    // getPostList({ id_user: userInfo.id });
   };
 
   const defaultValue = {
@@ -117,7 +117,9 @@ function RecommendLayout() {
   return (
     <PostListContext.Provider value={{ ...defaultValue }}>
       <div className={styles.recommendLayout}>
-        <p className={styles.recommendTitle}>This is recommend posts for you</p>
+        <p className={styles.recommendTitle}>
+          There are recommend posts for you
+        </p>
         {postList?.map((post) => {
           return (
             <React.Fragment key={post.id}>

@@ -14,26 +14,23 @@ function Comment({ comment: cmt }: { comment: ICommentFE }) {
 
   return (
     <div className={styles.comment}>
-      <Link to={""} className={styles.commentAvatar}>
-        <img
-          src={require("../../assets/images/users/girl.jpg")}
-          alt={user?.userDisplayName}
-        />
+      <Link to={`/profile?id=${user.userId}`} className={styles.commentAvatar}>
+        <img src={user.authorAvatar} alt={user?.userDisplayName} />
       </Link>
       <div className={styles.commentInfo}>
         <div className={styles.commentTop}>
-          <Link to={""} className={styles.userName}>
+          <Link to={`/profile?id=${user.userId}`} className={styles.userName}>
             {user?.userDisplayName}
           </Link>
           <p className={styles.commentContent}>{comment}</p>
         </div>
         <div className={styles.commentAction}>
-          <span className={styles.likeAction}>Thích</span>
+          <span className={styles.likeAction}>Like</span>
           <span
             className={styles.commentAction}
             onClick={() => setReplyComment(cmt)}
           >
-            Phản hồi
+            Reply
           </span>
         </div>
       </div>

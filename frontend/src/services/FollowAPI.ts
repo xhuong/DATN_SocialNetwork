@@ -68,9 +68,11 @@ export const FollowAPI = createApi({
 
 export const {
   useLazyGetFollowerUsersQuery,
+  useGetFollowerUsersQuery,
   useLazyGetNotFollowingUserQuery,
   useLazyFollowUserQuery,
   useLazyUnfollowUserQuery,
   useLazyGetFollowingUsersQuery,
   useCheckFollowedUserQuery,
+  useLazyCheckFollowedUserQuery,
 } = FollowAPI;

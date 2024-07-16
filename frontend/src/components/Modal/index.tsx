@@ -1,10 +1,12 @@
 import { ReactNode } from "react";
+import { useDispatch } from "react-redux";
+import { ModalProps } from "antd";
+
+import { closeModal } from "@/redux/slices/modal";
+
 import { CiCircleRemove } from "react-icons/ci";
 
 import styles from "./index.module.scss";
-import { useDispatch } from "react-redux";
-import { closeModal } from "@/redux/slices/modal";
-import { ModalProps } from "antd";
 
 interface IModalProps extends ModalProps {
   isShow: boolean;

@@ -34,15 +34,16 @@ function UserProfile({
         if (canNegative) navigate(`/profile?id=${idUser}`);
       }}
     >
-      <div
-        className={`
+      <div className={`${isActive ? styles.active : ""}`}>
+        <div
+          className={`
         ${styles.userProfileImage} 
         ${isRounded ? styles.rounded : ""} 
         ${isActive ? styles.active : ""}
-        
         `}
-      >
-        <img src={image} alt="" />
+        >
+          <img src={image} alt="" />
+        </div>
       </div>
       <span className={styles.userName}>{userDisplayName}</span>
     </div>

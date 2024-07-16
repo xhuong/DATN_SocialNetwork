@@ -4,6 +4,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { Response } from "express";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UpdateProfileInfoDto } from "./dto/update-profile.dto";
+import { UpdateAvatarDto } from "./dto/update-avatar.dto";
 
 @Injectable()
 export class UsersService {
@@ -36,6 +37,33 @@ export class UsersService {
         return response.status(200).json({
           status: 200,
           message: "Get all users successfully",
+          result: {
+            data: users,
+          },
+        });
+      }
+    } catch (error) {
+      return response.status(400).json({
+        status: 400,
+        message: error,
+      });
+    }
+  }
+
+  async findUsersByName(name: string, response: Response) {
+    console.log("🚀 ~ UsersService ~ findUsersByName ~ name:", name);
+    try {
+      const users = await this.prisma.user.findMany({
+        where: {
+          name: {
+            contains: name,
+          },
+        },
+      });
+      if (users) {
+        return response.status(200).json({
+          status: 200,
+          message: "Find users successfully",
           result: {
             data: users,
           },
@@ -155,6 +183,32 @@ export class UsersService {
       return {
         status: 400,
         message: `Update profile info with id ${id} failed`,
+      };
+    }
+  }
+
+  async updateAvatar(
+    id: number,
+    updateAvatar: UpdateAvatarDto,
+    response: Response,
+  ) {
+    try {
+      const data = await this.prisma.user.update({
+        where: { id },
+        data: updateAvatar,
+      });
+
+      return response.status(200).json({
+        status: 200,
+        message: `Update avatar with id ${id} successfully`,
+        result: {
+          data,
+        },
+      });
+    } catch {
+      return {
+        status: 400,
+        message: `Update avatar with id ${id} failed`,
       };
     }
   }

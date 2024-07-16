@@ -112,7 +112,13 @@ function LoginPage() {
                 Login
               </Button>
 
-              <Button btnType="primary" isRounded isFullWidth mt12>
+              <Button
+                btnType="primary"
+                isRounded
+                isFullWidth
+                mt12
+                onClick={() => navigate("/register")}
+              >
                 Register
               </Button>
             </Form>

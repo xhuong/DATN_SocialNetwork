@@ -14,9 +14,20 @@ import ProfilePage from "@/pages/ProfilePage";
 import PageNotFound from "@/pages/PageNotFound";
 
 import Loading from "@/components/Loading";
+import { routerPaths } from "./constant";
+// import socket from "./socket.js";
+// import { getUserInfo } from "./utils/auth";
 
 function App() {
   const isLoading = useSelector((state: RootState) => state.loading.isLoading);
+  // const userInfo = getUserInfo();
+
+  // useEffect(() => {
+  //   if (userInfo) {
+  //     socket.auth = { username: userInfo.name, userId: userInfo.id };
+  //     socket.connect();
+  //   }
+  // }, [userInfo]);
 
   return (
     <div className="app">
@@ -24,7 +35,7 @@ function App() {
         <Router>
           <Routes>
             <Route
-              path="/"
+              path={routerPaths.homePage}
               element={
                 <ProtectedRoute>
                   <HomePage />
@@ -32,7 +43,7 @@ function App() {
               }
             />
             <Route
-              path="/recommend"
+              path={routerPaths.recommendPage}
               element={
                 <ProtectedRoute>
                   <RecommendPage />
@@ -40,17 +51,17 @@ function App() {
               }
             />
             <Route
-              path="/profile"
+              path={routerPaths.profilePage}
               element={
                 <ProtectedRoute>
                   <ProfilePage />
                 </ProtectedRoute>
               }
             />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="*" element={<PageNotFound />} />
-            <Route path="/error/404" element={<PageNotFound />} />
+            <Route path={routerPaths.loginPage} element={<LoginPage />} />
+            <Route path={routerPaths.registerPage} element={<RegisterPage />} />
+            <Route path={routerPaths.pageNotFound} element={<PageNotFound />} />
+            <Route path={routerPaths.page404} element={<PageNotFound />} />
           </Routes>
         </Router>
         <ToastContainer />

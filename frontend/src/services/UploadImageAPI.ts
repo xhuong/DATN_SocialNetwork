@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface IUploadImagePayload {
   image_url: string;
-  post_id: number;
+  post_id?: number;
+  user_id?: number;
 }
 
 interface IUploadImageType {

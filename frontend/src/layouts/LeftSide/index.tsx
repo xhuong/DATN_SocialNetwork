@@ -1,5 +1,4 @@
 import UserProfile from "@/components/UserProfile";
-import { RootState } from "@/redux/store";
 
 import friends from "@/assets/images/leftside/friends.png";
 import defaultProfileImage from "@/assets/images/users/default.png";
@@ -27,16 +26,16 @@ function LeftSide() {
       />
       <ul>
         <li>
-          <UserProfile userDisplayName="Bạn bè" image={friends} />
+          <UserProfile userDisplayName="Friends" image={friends} />
         </li>
         <li>
-          <UserProfile userDisplayName="Ảnh" image={picture} />
+          <UserProfile userDisplayName="Images" image={picture} />
         </li>
         <li>
-          <UserProfile userDisplayName="Nhóm" image={userGroup} />
+          <UserProfile userDisplayName="Group" image={userGroup} />
         </li>
         <li>
-          <UserProfile userDisplayName="Đã lưu" image={saved} />
+          <UserProfile userDisplayName="Saved post" image={saved} />
         </li>
         <li>
           <UserProfile userDisplayName="Watch" image={video} />

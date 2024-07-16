@@ -32,7 +32,8 @@ function CommentInput({
       {replyComment?.comment && (
         <div className={styles.commentReply}>
           <p className={styles.commentReplyMessage}>
-            Phản hồi bình luận của: <b>{replyComment?.user.userDisplayName}</b>
+            You are replying and comment of:{" "}
+            <b>{replyComment?.user.userDisplayName}</b>
           </p>
           <div
             className={styles.removeReplyIcon}
@@ -56,7 +57,7 @@ function CommentInput({
         <input
           ref={inputRef}
           type="text"
-          placeholder="Viết bình luận công khai..."
+          placeholder="Enter your public comment..."
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               const target = e.target as HTMLInputElement;

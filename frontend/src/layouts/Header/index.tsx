@@ -1,16 +1,6 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-
-import {
-  IoSettingsOutline,
-  IoNotificationsOutline,
-  IoHomeOutline,
-} from "react-icons/io5";
-import { LuMessageCircle, LuLogOut } from "react-icons/lu";
-import { BsPostcard } from "react-icons/bs";
-import { MdGroups } from "react-icons/md";
-import { AiOutlineMessage, AiOutlineSetting } from "react-icons/ai";
-import { IoIosSearch } from "react-icons/io";
 
 import Chat from "@/layouts/ChatLayout/components/Chat";
 import { getUserInfo, logOut } from "@/utils/auth";
@@ -18,61 +8,108 @@ import UserProfile from "@/components/UserProfile";
 
 import { openChatModal } from "@/redux/slices/chat";
 
+import {
+  AiOutlineMessage,
+  AiOutlineSetting,
+  BsPostcard,
+  IoHomeOutline,
+  IoIosSearch,
+  IoNotificationsOutline,
+  IoSettingsOutline,
+  LuLogOut,
+  LuMessageCircle,
+  MdGroups,
+} from "./constant";
+
 import styles from "./index.module.scss";
+import { useLazyFindUsersByNameQuery } from "@/services/UserAPI";
+import { IUserResponseType } from "@/utils/user";
+import { Alert } from "antd";
 
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  // const [searchUsers, setSearchUsers] = useState<IUserResponseType[]>([]);
+  const [findUsersByName, { data: searchUsers, isSuccess, isFetching }] =
+    useLazyFindUsersByNameQuery();
 
   const userInfo = getUserInfo();
 
-  const showChatModal = () => {
+  const showChatModal = useCallback(() => {
     dispatch(openChatModal());
-  };
+  }, []);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logOut();
     navigate("/login");
-  };
+  }, []);
+
+  const HEADER_PAGES = useMemo(
+    () => [
+      { path: "/", icon: <IoHomeOutline /> },
+      { path: "/recommend", icon: <BsPostcard /> },
+      { path: "/groups", icon: <MdGroups /> },
+      { path: "/message", icon: <LuMessageCircle /> },
+      { path: "/settings", icon: <IoSettingsOutline /> },
+    ],
+    []
+  );
+
+  const handleOnChange = useCallback((e: any) => {
+    setTimeout(async () => {
+      try {
+        const name = e.target.value.trim();
+        if (name) {
+          console.log("calling this after 100ms");
+          await findUsersByName({ name: name });
+        }
+      } catch (error) {}
+    }, 100);
+  }, []);
 
   return (
     <div className={styles.header}>
       <div className={styles.headerLeft}>
         <div className={styles.headerLogo}>
-          <img src={require("../../assets/images/logo.png")} alt="" />
+          <img src={require("@/assets/images/logo.png")} alt="" />
         </div>
-        <div className={styles.headerSearch}>
-          <IoIosSearch />
-          <input type="text" placeholder="Tìm kiếm trên facebook" />
+        <div className={styles.headerSearchWrapper}>
+          <div className={styles.headerSearch}>
+            <IoIosSearch />
+            <input
+              type="text"
+              placeholder="searching user..."
+              onChange={handleOnChange}
+            />
+          </div>
+          <div className={styles.headerSearchResult}>
+            {!searchUsers && <p>Nothing to display...</p>}
+            {isFetching && <p>Searching user...</p>}
+            {!isFetching && searchUsers && (
+              <ul className={styles.resultList}>
+                {searchUsers.map((user: IUserResponseType) => (
+                  <li className={styles.resultItem}>
+                    <UserProfile
+                      isRounded
+                      canNegative
+                      idUser={user.id}
+                      userDisplayName={user.name}
+                      image={user.image_profile}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
       <div className={styles.headerPage}>
         <ul className={styles.headerPageList}>
-          <li className={styles.headerPageItem}>
-            <Link to="/">
-              <IoHomeOutline />
-            </Link>
-          </li>
-          <li className={styles.headerPageItem}>
-            <Link to="/recommend">
-              <BsPostcard />
-            </Link>
-          </li>
-          <li className={styles.headerPageItem}>
-            <Link to="/groups">
-              <MdGroups />
-            </Link>
-          </li>
-          <li className={styles.headerPageItem}>
-            <Link to="/message">
-              <LuMessageCircle />
-            </Link>
-          </li>
-          <li className={styles.headerPageItem}>
-            <Link to="/settings">
-              <IoSettingsOutline />
-            </Link>
-          </li>
+          {HEADER_PAGES.map((page) => (
+            <li className={styles.headerPageItem}>
+              <Link to={page.path}>{page.icon}</Link>
+            </li>
+          ))}
         </ul>
       </div>
       <div className={styles.headerProfile}>
@@ -89,10 +126,7 @@ export default function Header() {
           </li>
           <li className={styles.headerProfileItem}>
             <div className={styles.headerIcon}>
-              <img
-                src={require("../../assets/images/users/default.png")}
-                alt=""
-              />
+              <img src={userInfo.image_profile} alt="" />
             </div>
             <div className={styles.headerCard}>
               <div className={styles.headerCardInfo}>
@@ -111,7 +145,7 @@ export default function Header() {
                     <span className={styles.headerCardInfoIcon}>
                       <AiOutlineSetting />
                     </span>
-                    <p>Cài đặt</p>
+                    <p>Setting</p>
                   </li>
                   <li
                     className={styles.headerCardInfoItem}
@@ -120,7 +154,7 @@ export default function Header() {
                     <span className={styles.headerCardInfoIcon}>
                       <LuLogOut />
                     </span>
-                    <p>Đăng xuất</p>
+                    <p>Logout</p>
                   </li>
                 </ul>
               </div>

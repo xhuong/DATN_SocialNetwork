@@ -8,11 +8,10 @@
   .userProfileImage {
     height: 40px;
     width: 40px;
+    overflow: hidden;
   }
-  .rounded {
-    img {
-      border-radius: 50%;
-    }
+  .rounded.userProfileImage {
+    border-radius: 50%;
   }
   .active {
     position: relative;

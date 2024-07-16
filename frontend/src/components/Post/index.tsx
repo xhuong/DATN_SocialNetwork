@@ -1,3 +1,4 @@
+import { createContext, useContext, useState } from "react";
 import { Col, Row } from "antd";
 
 import { ICommentFE, IPostFE, calculateTime } from "@/utils/common";
@@ -12,7 +13,6 @@ import { IoEarth } from "react-icons/io5";
 
 import girl from "@/assets/images/users/girl.jpg";
 
-import { createContext, useContext, useState } from "react";
 import { IPostListProvider, PostListContext } from "@/layouts/PostList";
 
 import styles from "./index.module.scss";
@@ -68,7 +68,7 @@ function Post({ post }: { post: IPostFE }) {
                 <p className={styles.postAuthorName}>{user?.userDisplayName}</p>
                 {feeling && (
                   <p className={styles.postAuthFeeling}>
-                    Đang cảm thấy <b>{feeling}</b>
+                    's feeling <b>{feeling}</b>
                   </p>
                 )}
               </div>
@@ -125,12 +125,12 @@ function Post({ post }: { post: IPostFE }) {
             <div className={styles.postCommentShare}>
               <span>
                 <span className={styles.postCommentShareText}>
-                  {commentCount} bình luận
+                  {commentCount} {"comment" + `${commentCount > 1 ? "s" : ""}`}
                 </span>
               </span>
               <span>
                 <span className={styles.postCommentShareText}>
-                  {shareCount} lượt chia sẻ
+                  {shareCount} {"share" + `${shareCount > 1 ? "s" : ""}`}
                 </span>
               </span>
             </div>
@@ -154,7 +154,7 @@ function Post({ post }: { post: IPostFE }) {
                     {isLiked ? <BiSolidLike /> : <BiLike />}
                   </span>
                   <span className={styles.postFooterActionItemText}>
-                    {isLiked ? "Đã thích" : "Thích"}
+                    {isLiked ? "Liked" : "Like"}
                   </span>
                 </span>
               </div>
@@ -166,7 +166,7 @@ function Post({ post }: { post: IPostFE }) {
                     <FaRegComment />
                   </span>
                   <span className={styles.postFooterActionItemText}>
-                    Bình luận
+                    Add comment
                   </span>
                 </span>
               </div>
@@ -177,9 +177,7 @@ function Post({ post }: { post: IPostFE }) {
                   <span className={styles.postFooterActionItemIcon}>
                     <RiShareForwardLine />
                   </span>
-                  <span className={styles.postFooterActionItemText}>
-                    Chia sẻ
-                  </span>
+                  <span className={styles.postFooterActionItemText}>Share</span>
                 </span>
               </div>
             </Col>

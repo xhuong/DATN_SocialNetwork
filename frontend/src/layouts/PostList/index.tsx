@@ -1,4 +1,10 @@
-import React, { useEffect, useState, createContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  createContext,
+  useCallback,
+  useMemo,
+} from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
@@ -50,7 +56,7 @@ export const PostListContext = createContext<IPostListProvider>({
 function PostList({
   userId,
   id_user_viewing,
-  is_includes_posts_of_following_users,
+  is_includes_posts_of_following_users: isInclude,
   isSelf,
 }: {
   userId: number;
@@ -73,38 +79,47 @@ function PostList({
 
   const [addNewComment] = useLazyAddNewCommentQuery();
 
-  const handleLikeAPost = async (userId: number, postId: number) => {
-    if (userId && postId) {
-      await likeAPost({ post_id: postId, user_id: id_user_viewing });
+  const handleLikeAPost = useCallback(
+    async (userId: number, postId: number) => {
+      if (userId && postId) {
+        await likeAPost({ post_id: postId, user_id: id_user_viewing });
+        await getPostList({
+          id_user: userId,
+          id_user_viewing: userInfo.id,
+          is_includes_posts_of_following_users: isInclude,
+        });
+      }
+    },
+    [userId, userInfo, isInclude]
+  );
+
+  const handleDislikeAPost = useCallback(
+    async (userId: number, postId: number) => {
+      if (userId && postId) {
+        await dislikeAPost({ post_id: postId, user_id: id_user_viewing });
+        await getPostList({
+          id_user: userId,
+          id_user_viewing: userInfo.id,
+          is_includes_posts_of_following_users: isInclude,
+        });
+      }
+    },
+    [userId, userInfo, isInclude]
+  );
+
+  const handleComment = useCallback(
+    async (comment: IAddNewCommentDto) => {
+      await addNewComment(comment);
       await getPostList({
         id_user: userId,
         id_user_viewing: userInfo.id,
-        is_includes_posts_of_following_users,
+        is_includes_posts_of_following_users: isInclude,
       });
-    }
-  };
+    },
+    [userId, userInfo, isInclude]
+  );
 
-  const handleDislikeAPost = async (userId: number, postId: number) => {
-    if (userId && postId) {
-      await dislikeAPost({ post_id: postId, user_id: id_user_viewing });
-      await getPostList({
-        id_user: userId,
-        id_user_viewing: userInfo.id,
-        is_includes_posts_of_following_users,
-      });
-    }
-  };
-
-  const handleComment = async (comment: IAddNewCommentDto) => {
-    await addNewComment(comment);
-    await getPostList({
-      id_user: userId,
-      id_user_viewing: userInfo.id,
-      is_includes_posts_of_following_users,
-    });
-  };
-
-  const onCreatePostSuccess = () => {
+  const onCreatePostSuccess = useCallback(() => {
     toast.error("Create a new post successfully ✨", {
       autoClose: 2000,
       theme: "light",
@@ -112,9 +127,9 @@ function PostList({
     getPostList({
       id_user: userId,
       id_user_viewing: userInfo.id,
-      is_includes_posts_of_following_users,
+      is_includes_posts_of_following_users: isInclude,
     });
-  };
+  }, [userId, userInfo, isInclude]);
 
   useEffect(() => {
     if (data && isSuccess) {
@@ -125,12 +140,13 @@ function PostList({
   }, [data, isSuccess]);
 
   useEffect(() => {
-    getPostList({
-      id_user: userId,
-      id_user_viewing: userInfo.id,
-      is_includes_posts_of_following_users,
-    });
-  }, []);
+    userId &&
+      getPostList({
+        id_user: userId,
+        id_user_viewing: userInfo.id,
+        is_includes_posts_of_following_users: isInclude,
+      });
+  }, [userId]);
 
   const defaultValue = {
     handleLikeAPost,

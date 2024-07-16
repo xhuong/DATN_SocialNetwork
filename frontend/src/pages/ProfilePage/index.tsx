@@ -20,23 +20,35 @@ import {
 } from "@/pages/constant";
 
 import { useGetProfileInfoQuery } from "@/services/UserAPI";
-import { useCheckFollowedUserQuery } from "@/services/FollowAPI";
+import {
+  useCheckFollowedUserQuery,
+  useGetFollowerUsersQuery,
+  useLazyGetFollowerUsersQuery,
+} from "@/services/FollowAPI";
 
-import styles from "./index.module.scss";
 import { RiUserUnfollowLine } from "react-icons/ri";
 import EditProfileInfoModal from "@/components/EditProfileInfoModal";
+import UploadAvatarModal from "@/components/UploadAvatarModal";
+
+import styles from "./index.module.scss";
 
 const ProfilePage = () => {
   const userInfo: IUserBE | null = getUserInfo();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [showUploadAvatarModal, setShowUploadAvatarModal] = useState(false);
 
   const profileId = Number.parseInt(searchParams.get("id") || "");
 
   const isSelf = userInfo.id == profileId;
 
-  const { data, isSuccess, isError } = useGetProfileInfoQuery(
+  const {
+    data,
+    isSuccess,
+    isError,
+    refetch: refetchProfileInfo,
+  } = useGetProfileInfoQuery(
     { userId: profileId },
     { skip: profileId === null }
   );
@@ -55,9 +67,18 @@ const ProfilePage = () => {
   const onCancel = () => {
     setShowEditProfileModal(false);
   };
-  console.log("sds", isSelf);
 
-  console.log("!isSelf && isFollowedUser", !isSelf && isFollowedUser);
+  const onCancelUploadAvatar = () => {
+    setShowUploadAvatarModal(false);
+  };
+
+  // get follower users
+
+  const {
+    data: followers,
+    isSuccess: isFetchFollowersSuccess,
+    refetch: refetchFollowers,
+  } = useGetFollowerUsersQuery({ id: profileId });
 
   return (
     <>
@@ -92,12 +113,33 @@ const ProfilePage = () => {
                     <img src={data?.image_profile} alt="" />
                   </div>
                   {isSelf && (
-                    <IoIosCamera className={styles.cameraIcon} size={36} />
+                    <IoIosCamera
+                      className={styles.cameraIcon}
+                      size={36}
+                      onClick={() => setShowUploadAvatarModal(true)}
+                    />
                   )}
                 </div>
                 <div className={styles.authorInfo}>
                   <h2 className={styles.authorName}>{data?.name}</h2>
-                  <p className={styles.followingCount}>689 followers</p>
+                  <p className={styles.followingCount}>
+                    {followers?.result.data.length} followers
+                  </p>
+                  <ul className={styles.followers}>
+                    {followers?.result.data.map((item, index) => (
+                      <li className={styles.follower} key={index}>
+                        <div className={styles.followerAvatar}>
+                          <img src={item.image_profile} alt={item.name} />
+                        </div>
+                        <div className={styles.userInfoCard}>
+                          <div className={styles.userInfoCardAvatar}>
+                            <img src={item.image_profile} alt={item.name} />
+                          </div>
+                          <p className={styles.userInfoCardName}>{item.name}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
               <ul className={styles.action}>
@@ -127,7 +169,7 @@ const ProfilePage = () => {
                       isNonePadding
                       onClick={() => {}}
                     >
-                      <FaPlus /> Thêm vào tin
+                      <FaPlus /> Add story
                     </Button>
                   </li>
                 )}
@@ -139,7 +181,7 @@ const ProfilePage = () => {
                       isNonePadding
                       onClick={() => setShowEditProfileModal(true)}
                     >
-                      <IoPencil /> Chỉnh sửa trang cá nhân
+                      <IoPencil /> Edit profile
                     </Button>
                   </li>
                 )}
@@ -147,9 +189,9 @@ const ProfilePage = () => {
             </div>
             <div className={styles.body}>
               <Row gutter={{ xs: 16, md: 16 }}>
-                <Col xs={8} style={{ marginTop: "40px" }}>
+                <Col xs={8} style={{ marginTop: "24px" }}>
                   <div className={styles.introduce}>
-                    <p className={styles.title}>Giới thiệu</p>
+                    <p className={styles.title}>Introduce</p>
                     {isSelf && (
                       <Button
                         btnType="secondary"
@@ -159,26 +201,26 @@ const ProfilePage = () => {
                         onClick={() => {}}
                         style={{ marginBottom: "8px" }}
                       >
-                        Thêm tiểu sử
+                        Add biography
                       </Button>
                     )}
                     <ul className={styles.introduceList}>
                       <li className={styles.introduceItem}>
                         <IoSchool className={styles.icon} />
                         <span>
-                          Đã học tại <b>Trường THPT Tuyên Hóa</b>
+                          School: <b>Vietnam - Korean University</b>
                         </span>
                       </li>
                       <li className={styles.introduceItem}>
                         <TiHome className={styles.icon} />
                         <span>
-                          Sống tại <b>Tuyên Hóa</b>
+                          Live in <b>Tuyen Hoa</b>
                         </span>
                       </li>
                       <li className={styles.introduceItem}>
                         <SlUserFollowing className={styles.icon} />
                         <span>
-                          Có <b>149 người</b> theo dõi
+                          <b>{followers?.result.data.length}</b> followers
                         </span>
                       </li>
                     </ul>
@@ -192,7 +234,7 @@ const ProfilePage = () => {
                           onClick={() => {}}
                           style={{ marginBottom: "8px" }}
                         >
-                          Chỉnh sửa chi tiết
+                          Edit detail
                         </Button>
                         <Button
                           btnType="secondary"
@@ -201,7 +243,7 @@ const ProfilePage = () => {
                           isNonePadding
                           onClick={() => {}}
                         >
-                          Thêm nội dung đáng chú ý
+                          Add highlight content
                         </Button>
                       </>
                     )}
@@ -235,6 +277,14 @@ const ProfilePage = () => {
         isShow={showEditProfileModal}
         userId={userInfo.id}
         onCancel={onCancel}
+      />
+      <UploadAvatarModal
+        show={showUploadAvatarModal}
+        onSuccess={() => {
+          refetchProfileInfo();
+          setShowUploadAvatarModal(false);
+        }}
+        onCancel={onCancelUploadAvatar}
       />
     </>
   );

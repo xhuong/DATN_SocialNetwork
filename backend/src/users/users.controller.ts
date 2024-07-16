@@ -18,6 +18,7 @@ import { Role } from "src/common/roles";
 import { Roles } from "src/common/roles/roles.decorator";
 import { RolesGuard } from "src/common/roles/roles.guard";
 import { UpdateProfileInfoDto } from "./dto/update-profile.dto";
+import { UpdateAvatarDto } from "./dto/update-avatar.dto";
 
 @Controller("user")
 export class UsersController {
@@ -42,6 +43,11 @@ export class UsersController {
   @Get()
   findAll(@Res() response: Response) {
     return this.usersService.findAll(response);
+  }
+
+  @Get("find-users-by-name/:name")
+  findUsersByName(@Param("name") name: string, @Res() response: Response) {
+    return this.usersService.findUsersByName(name, response);
   }
 
   @Get("get-profile-info/:id")
@@ -78,5 +84,14 @@ export class UsersController {
       updateProfileInfoDto,
       response,
     );
+  }
+
+  @Patch("/update-avatar/:id")
+  updateAvatar(
+    @Param("id") id: string,
+    @Body() updateProfileInfoDto: UpdateAvatarDto,
+    @Res() response: Response,
+  ) {
+    return this.usersService.updateAvatar(+id, updateProfileInfoDto, response);
   }
 }

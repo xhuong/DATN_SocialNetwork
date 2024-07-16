@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Col, Form, Input, Modal, Row } from "antd";
+import { Col, Form, Input, Modal, Row, Select } from "antd";
 
 import { toast } from "react-toastify";
 
@@ -19,11 +19,17 @@ import {
 } from "@/utils/constant";
 
 import styles from "./index.module.scss";
+import { EMOTIONS } from "./constant";
 
 interface ICreatePostModalPropsType {
   isShow: boolean;
   onSuccess: () => void;
   feeling?: string;
+}
+
+interface ICreatePostFormValue {
+  postContent: string;
+  emotion?: string;
 }
 
 function CreatePostModal({
@@ -59,8 +65,6 @@ function CreatePostModal({
   };
 
   const handleUploadFile = async (post_id: number) => {
-    const uploaded: any = [];
-
     for (let i = 0; i < selectedFiles.length; i++) {
       const formData = new FormData();
       formData.append("file", selectedFiles[i]);
@@ -85,29 +89,27 @@ function CreatePostModal({
     }
   };
 
-  const handleSubmitPost = async (value: any) => {
+  const handleSubmitPost = async (value: ICreatePostFormValue) => {
     if (userInfo?.id) {
       try {
         dispatch(showLoading());
         const postRes: any = await createPost({
-          title: value?.postContent,
+          title: value.postContent,
           user_id: userInfo?.id,
+          feeling: value.emotion,
         });
 
         await handleUploadFile(postRes?.data?.result?.data?.id);
 
         onSuccess();
-        dispatch(hideLoading());
-        dispatch(closeModal());
       } catch (error) {
         toast.error("Error when create your post!", {
           autoClose: 2000,
           theme: "light",
         });
-        dispatch(hideLoading());
-        dispatch(closeModal());
       }
     } else {
+      dispatch(hideLoading());
       dispatch(closeModal());
     }
   };
@@ -126,23 +128,30 @@ function CreatePostModal({
       className={styles.modal}
     >
       <UserProfile
-        image={require("../../assets/images/users/default.png")}
+        image={userInfo.image_profile}
         userDisplayName={userInfo.name}
         isRounded
         bgGray={false}
       />
       <Form layout="vertical" onFinish={handleSubmitPost}>
+        <Form.Item name="emotion">
+          <Select
+            style={{ width: "50%" }}
+            options={[...EMOTIONS]}
+            placeholder="How do you feeling?"
+          />
+        </Form.Item>
         <Form.Item
           name="postContent"
           rules={[
             {
               required: true,
-              message: "Hãy chia sẻ suy nghĩ trước nhé bạn ơi",
+              message: "Please input your think first 😊",
             },
           ]}
         >
           <Input.TextArea
-            placeholder={`${userInfo.name} ơi, bạn đang nghĩ gì vậy?`}
+            placeholder={`Hey ${userInfo.name}!, What are you thinking?`}
             autoSize={false}
             style={{ resize: "none", minHeight: "90px", borderRadius: "8px" }}
           />

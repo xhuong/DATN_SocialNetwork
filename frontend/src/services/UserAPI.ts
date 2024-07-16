@@ -1,4 +1,4 @@
-import { IUserResponseType } from "@/utils/user";
+import { IUserBEOmitId, IUserResponseType } from "@/utils/user";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const BASE_URL = "/user";
@@ -24,6 +24,31 @@ export const UserAPI = createApi({
       }),
       transformResponse: (res: any) => res.result.data,
     }),
+    createNewUser: builder.mutation<IUserResponseType, IUserBEOmitId>({
+      query: (payload) => ({
+        url: `${BASE_URL}/create-user`,
+        body: payload,
+        method: "POST",
+      }),
+      transformResponse: (res: any) => res.result.data,
+    }),
+    findUsersByName: builder.query<IUserResponseType[], { name: string }>({
+      query: ({ name }) => ({
+        url: `${BASE_URL}/find-users-by-name/${name}`,
+      }),
+      transformResponse: (res: any) => res.result.data,
+    }),
+    updateAvatar: builder.mutation<
+      void,
+      { id: number; updateAvatarDto: { image_profile: string } }
+    >({
+      query: ({ id, updateAvatarDto }) => ({
+        url: `${BASE_URL}/update-avatar/${id}`,
+        body: updateAvatarDto,
+        method: "PATCH",
+      }),
+      transformResponse: (res: any) => res.result.data,
+    }),
   }),
 });
 
@@ -31,4 +56,7 @@ export const {
   useGetProfileInfoQuery,
   useLazyGetProfileInfoQuery,
   useUpdateProfileInfoMutation,
+  useUpdateAvatarMutation,
+  useCreateNewUserMutation,
+  useLazyFindUsersByNameQuery,
 } = UserAPI;

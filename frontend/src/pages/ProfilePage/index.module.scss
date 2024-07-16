@@ -82,6 +82,58 @@
           font-weight: 500;
           font-size: 1.6rem;
         }
+        .followers {
+          display: flex;
+          .follower {
+            position: relative;
+            cursor: pointer;
+            .followerAvatar {
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              overflow: hidden;
+            }
+            .userInfoCard {
+              width: 200px;
+              box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px;
+              border-radius: 8px;
+              background-color: #ffffff;
+              padding: 8px 16px;
+              display: none;
+              position: absolute;
+              bottom: calc(100% + 2px);
+              left: 0;
+              align-items: center;
+              column-gap: 6px;
+              .userInfoCardAvatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                overflow: hidden;
+                flex-shrink: 0;
+              }
+              .userInfoCardName {
+                font-size: 1.4rem;
+                flex: 1;
+              }
+              &::before {
+                content: "";
+                display: block;
+                border-width: 8px;
+                border-style: solid;
+                border-color: #ffffff transparent transparent transparent;
+                position: absolute;
+                top: calc(100% - 2px);
+                left: 6px;
+              }
+            }
+            &:hover {
+              .userInfoCard {
+                display: flex;
+              }
+            }
+          }
+        }
       }
     }
     .action {

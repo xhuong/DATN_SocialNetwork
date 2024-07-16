@@ -11,7 +11,6 @@ import MessagePanel from "@/layouts/ChatLayout/components/MessagePanel";
 
 import socket from "../socket";
 
-import styles from "./index.module.scss";
 import {
   useLazyGetFollowerUsersQuery,
   useLazyGetFollowingUsersQuery,
@@ -20,8 +19,9 @@ import {
   useLazyGetAllMessageFromConversationQuery,
   useLazySaveMessageQuery,
 } from "@/services/ChatAPI";
-import { getMessage } from "@reduxjs/toolkit/dist/actionCreatorInvariantMiddleware";
 import { IReceviedMessageBE } from "@/utils/chat";
+
+import styles from "./index.module.scss";
 
 interface IMessage {
   content: string;
@@ -158,9 +158,8 @@ const Chat = () => {
     });
 
     // both users follow the last one then they can sending message
-
     socket.on("users", async (usersFromServer) => {
-      // console.log("[CLIENT] [USERS EVENT] usersFromServer", usersFromServer);
+      console.log("[CLIENT] [USERS EVENT] usersFromServer", usersFromServer);
 
       // const userInfo = getUserInfo();
       // const userServerIds = usersFromServer.map((u: any) => u.userId);
