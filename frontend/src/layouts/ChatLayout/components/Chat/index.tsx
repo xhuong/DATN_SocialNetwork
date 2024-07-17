@@ -121,11 +121,11 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (userInfo?.name && userInfo?.id && show) {
+    if (userInfo?.name && userInfo?.id) {
       socket.auth = { username: userInfo.name, userId: userInfo.id };
       socket.connect();
     }
-  }, [userInfo, show]);
+  }, []);
 
   useEffect(() => {
     const initReactiveProperties = (user: any) => {

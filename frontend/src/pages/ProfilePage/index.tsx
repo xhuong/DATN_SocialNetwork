@@ -72,8 +72,6 @@ const ProfilePage = () => {
     setShowUploadAvatarModal(false);
   };
 
-  // get follower users
-
   const {
     data: followers,
     isSuccess: isFetchFollowersSuccess,
