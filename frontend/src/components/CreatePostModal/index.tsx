@@ -99,17 +99,19 @@ function CreatePostModal({
           feeling: value.emotion,
         });
 
-        await handleUploadFile(postRes?.data?.result?.data?.id);
-
-        onSuccess();
+        await handleUploadFile(postRes?.data?.result?.data?.id).then(() =>
+          onSuccess()
+        );
       } catch (error) {
         toast.error("Error when create your post!", {
           autoClose: 2000,
           theme: "light",
         });
+      } finally {
+        dispatch(hideLoading());
+        dispatch(closeModal());
       }
     } else {
-      dispatch(hideLoading());
       dispatch(closeModal());
     }
   };
@@ -151,7 +153,7 @@ function CreatePostModal({
           ]}
         >
           <Input.TextArea
-            placeholder={`Hey ${userInfo.name}!, What are you thinking?`}
+            placeholder={`Hey ${userInfo.name}!, What do you thinking?`}
             autoSize={false}
             style={{ resize: "none", minHeight: "90px", borderRadius: "8px" }}
           />

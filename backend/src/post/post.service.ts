@@ -51,6 +51,36 @@ export class PostService {
     }
   }
 
+  async getLatestLikedPost(id_user: number, response: Response) {
+    try {
+      const posts = await this.prisma.post.findFirst({
+        where: {
+          Like: {
+            some: {
+              user_id: id_user,
+            },
+          },
+        },
+        orderBy: { created_date: "desc" },
+        select: { id: true, title: true },
+      });
+      if (posts) {
+        return response.status(200).json({
+          status: 200,
+          message: "Get latest liked post successfully",
+          result: {
+            data: posts,
+          },
+        });
+      }
+    } catch (error) {
+      return response.status(400).json({
+        status: 400,
+        message: error,
+      });
+    }
+  }
+
   // ---  get all posts that current user was liked ---
 
   // give the current_user_id for this api

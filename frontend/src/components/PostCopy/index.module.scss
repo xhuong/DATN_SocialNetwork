@@ -1,0 +1,128 @@
+.post {
+  background-color: var(--white-color);
+  padding: 16px;
+  border-radius: 16px;
+  margin-top: 16px;
+  .postHeader {
+    .postAuthor {
+      display: flex;
+      column-gap: 8px;
+      align-items: flex-start;
+      .postAuthorImage {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+      .postAuthorInfo {
+        .postAuthNameWrapper {
+          display: flex;
+          column-gap: 4px;
+        }
+        .postAuthorName {
+          font-weight: 600;
+        }
+        .postAuthFeeling,
+        .postAuthorName {
+          font-size: 1.4rem;
+          line-height: 1;
+        }
+        .postTime {
+          margin-top: 4px;
+          display: flex;
+          align-items: center;
+          column-gap: 4px;
+        }
+        .postTimeIcon {
+          font-size: 16px;
+          display: inline-flex;
+        }
+        .postHeaderDate {
+          font-size: 1.2rem;
+          font-style: italic;
+        }
+      }
+    }
+    .postHeaderAction {
+    }
+  }
+  .postBody {
+    margin-top: 16px;
+    .postTitle {
+      font-size: 1.4rem;
+      font-weight: 300;
+    }
+    .postImages {
+      margin-top: 8px;
+      .postImageItem {
+        height: 480px;
+        background-color: #f9f6f6;
+        img {
+          height: 100%;
+          margin: 0 auto;
+        }
+      }
+    }
+  }
+  .postFooter {
+    padding: 16px 16px 0;
+    .postFooterInfo {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      .postLike {
+        display: flex;
+        column-gap: 4px;
+        .postLikeIcon {
+          display: inline-flex;
+          font-size: 1.8rem;
+          line-height: 1;
+          color: #0866ff;
+        }
+        .postLikeCount {
+          font-size: 1.4rem;
+        }
+      }
+      .postCommentShare {
+        line-height: 1;
+        cursor: pointer;
+        .postCommentShareText {
+          margin-left: 4px;
+          font-size: 1.4rem;
+        }
+        & > span:not(:first-child) {
+          margin-left: 8px;
+        }
+        .postCommentShareText:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    .postFooterAction {
+      .postFooterActionItem {
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        &:hover {
+          background-color: var(--gray-light-color);
+        }
+        > span {
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+        }
+        .postFooterActionItemIcon {
+          display: inline-flex;
+        }
+        .likedPost {
+          color: #0866ff;
+        }
+        .postFooterActionItemText {
+          line-height: 1;
+          font-size: 1.4rem;
+          margin-left: 6px;
+        }
+      }
+    }
+  }
+}

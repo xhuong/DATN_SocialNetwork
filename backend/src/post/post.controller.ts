@@ -11,7 +11,7 @@ import {
 import { PostService } from "./post.service";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
-import { Response, response } from "express";
+import { Response } from "express";
 import { GetPostsDto } from "./dto/get-posts.dto";
 
 @Controller("post")
@@ -26,6 +26,11 @@ export class PostController {
   @Get()
   findAll(@Res() response: Response) {
     return this.postService.findAll(response);
+  }
+
+  @Get("/get-latest-liked-post/:id")
+  getLatestLikedPost(@Param("id") id: string, @Res() response: Response) {
+    return this.postService.getLatestLikedPost(+id, response);
   }
 
   @Post("/get-posts-by-user-id")

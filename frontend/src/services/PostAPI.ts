@@ -63,6 +63,14 @@ export const PostAPI = createApi({
         };
       },
     }),
+    getLatestLikedPost: builder.query<IPostsTypes, { id: number }>({
+      query: ({ id }) => {
+        return {
+          url: `${prefix}/get-latest-liked-post/${id}`,
+        };
+      },
+      transformResponse: (res: any) => res.result.data,
+    }),
     createPost: builder.query<IPostTypes, IPayloadCreatePostsDto>({
       query: (payload) => {
         return {
@@ -117,6 +125,7 @@ export const PostAPI = createApi({
 });
 
 export const {
+  useLazyGetLatestLikedPostQuery,
   useGetPostListByUserIdQuery,
   useLazyGetPostListByUserIdQuery,
   useLazyCreatePostQuery,

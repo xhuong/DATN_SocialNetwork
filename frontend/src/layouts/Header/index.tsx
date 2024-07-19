@@ -83,7 +83,7 @@ export default function Header() {
             />
           </div>
           <div className={styles.headerSearchResult}>
-            {!searchUsers && <p>Nothing to display...</p>}
+            {/* {!searchUsers && <p>Nothing to display...</p>} */}
             {isFetching && <p>Searching user...</p>}
             {!isFetching && searchUsers && (
               <ul className={styles.resultList}>
