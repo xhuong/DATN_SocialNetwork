@@ -74,8 +74,12 @@ const ProfilePage = () => {
     { refetchOnMountOrArgChange: true }
   );
 
-  const [followUser, { data: isFollowed }] = useLazyFollowUserQuery();
-  const [unFollowUser, { data: unFollowUserData }] = useLazyUnfollowUserQuery();
+  const [followUser, { data: isFollowed, isFetching }] =
+    useLazyFollowUserQuery();
+  const [
+    unFollowUser,
+    { data: unFollowUserData, isSuccess: isSuccessUnfollowedUser },
+  ] = useLazyUnfollowUserQuery();
 
   const onCancel = () => {
     setShowEditProfileModal(false);
@@ -93,9 +97,23 @@ const ProfilePage = () => {
     ]);
   }, []);
 
-  useEffect(() => {
-    isFollowed && handleUpdateProfileInfo();
-  }, [isFollowed]);
+  const handleFollowUser = async (
+    profileId: number,
+    currentUserId: number,
+    type: "follow" | "unfollow"
+  ) => {
+    type === "follow" &&
+      (await followUser({
+        user_id: profileId,
+        follower_id: currentUserId,
+      }));
+    type === "unfollow" &&
+      (await unFollowUser({
+        user_id: profileId,
+        follower_id: userInfo.id,
+      }));
+    handleUpdateProfileInfo();
+  };
 
   useEffect(() => {
     if (isError || (!data && isSuccess)) {
@@ -171,10 +189,7 @@ const ProfilePage = () => {
                     btnType="primary"
                     isRounded
                     onClick={() =>
-                      followUser({
-                        user_id: userInfo.id,
-                        follower_id: profileId,
-                      })
+                      handleFollowUser(profileId, userInfo.id, "follow")
                     }
                   >
                     <FaPlus /> Follow
@@ -192,10 +207,7 @@ const ProfilePage = () => {
                       btnType="primary"
                       isRounded
                       onClick={() =>
-                        unFollowUser({
-                          user_id: profileId,
-                          follower_id: userInfo.id,
-                        })
+                        handleFollowUser(profileId, userInfo.id, "unfollow")
                       }
                     >
                       <RiUserUnfollowLine /> Unfollow

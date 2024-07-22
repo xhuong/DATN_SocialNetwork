@@ -47,7 +47,7 @@ export const FollowAPI = createApi({
     unfollowUser: builder.query<IOnFollowUserResponseType, IFollowUserPayload>({
       query: (payload) => {
         return {
-          url: BASE_URL,
+          url: `${BASE_URL}/unfollow-user`,
           body: payload,
           method: "DELETE",
         };
