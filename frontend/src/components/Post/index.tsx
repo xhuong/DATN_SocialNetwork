@@ -11,9 +11,9 @@ import { FaRegComment } from "react-icons/fa6";
 import { RiShareForwardLine } from "react-icons/ri";
 import { IoEarth } from "react-icons/io5";
 
-import girl from "@/assets/images/users/girl.jpg";
-
 import { IPostListProvider, PostListContext } from "@/layouts/PostList";
+
+import { ELikeType } from "@/services/LikeAPI";
 
 import styles from "./index.module.scss";
 
@@ -27,7 +27,7 @@ export const PostContext = createContext<IPostProvider>({
   setReplyComment: () => {},
 });
 
-function Post({ post }: { post: IPostFE }) {
+function Post({ post, avatar }: { post: IPostFE; avatar: string }) {
   const {
     commentCount,
     createdDate,
@@ -41,12 +41,8 @@ function Post({ post }: { post: IPostFE }) {
     isLiked,
     feeling,
   } = post;
-  const {
-    handleLikeAPost,
-    handleDislikeAPost,
-    handleComment,
-    userId,
-  }: IPostListProvider = useContext(PostListContext);
+  const { handleLikePost, handleComment, userId }: IPostListProvider =
+    useContext(PostListContext);
 
   const [replyComment, setReplyComment] = useState<ICommentFE | null>();
 
@@ -139,11 +135,13 @@ function Post({ post }: { post: IPostFE }) {
             <Col xs={8} sm={8}>
               <div
                 className={styles.postFooterActionItem}
-                onClick={() => {
-                  isLiked
-                    ? handleDislikeAPost(userId, id)
-                    : handleLikeAPost(userId, id);
-                }}
+                onClick={() =>
+                  handleLikePost(
+                    userId,
+                    id,
+                    isLiked ? ELikeType.DISLIKE : ELikeType.LIKE
+                  )
+                }
               >
                 <span>
                   <span
@@ -184,7 +182,7 @@ function Post({ post }: { post: IPostFE }) {
           </Row>
         </div>
         <PostComments postComments={comments} />
-        <CommentInput avatar={girl} postId={id} onSubmit={handleComment} />
+        <CommentInput avatar={avatar} postId={id} onSubmit={handleComment} />
       </div>
     </PostContext.Provider>
   );

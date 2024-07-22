@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Alert, Col, Row } from "antd";
 
@@ -23,7 +23,8 @@ import { useGetProfileInfoQuery } from "@/services/UserAPI";
 import {
   useCheckFollowedUserQuery,
   useGetFollowerUsersQuery,
-  useLazyGetFollowerUsersQuery,
+  useLazyFollowUserQuery,
+  useLazyUnfollowUserQuery,
 } from "@/services/FollowAPI";
 
 import { RiUserUnfollowLine } from "react-icons/ri";
@@ -53,16 +54,28 @@ const ProfilePage = () => {
     { skip: profileId === null }
   );
 
-  const { data: isFollowedUser } = useCheckFollowedUserQuery({
-    user_id: userInfo.id,
-    follower_id: profileId,
-  });
+  const { data: isFollowedUser, refetch: recheckFollowedUser } =
+    useCheckFollowedUserQuery(
+      {
+        user_id: profileId,
+        follower_id: userInfo.id,
+      },
+      {
+        refetchOnMountOrArgChange: true,
+      }
+    );
 
-  useEffect(() => {
-    if (isError || (!data && isSuccess)) {
-      navigate("/error/404");
-    }
-  }, [data, isError, isSuccess]);
+  const {
+    data: followers,
+    isSuccess: isFetchFollowersSuccess,
+    refetch: refetchFollowers,
+  } = useGetFollowerUsersQuery(
+    { id: profileId },
+    { refetchOnMountOrArgChange: true }
+  );
+
+  const [followUser, { data: isFollowed }] = useLazyFollowUserQuery();
+  const [unFollowUser, { data: unFollowUserData }] = useLazyUnfollowUserQuery();
 
   const onCancel = () => {
     setShowEditProfileModal(false);
@@ -72,11 +85,23 @@ const ProfilePage = () => {
     setShowUploadAvatarModal(false);
   };
 
-  const {
-    data: followers,
-    isSuccess: isFetchFollowersSuccess,
-    refetch: refetchFollowers,
-  } = useGetFollowerUsersQuery({ id: profileId });
+  const handleUpdateProfileInfo = useCallback(() => {
+    Promise.all([
+      refetchProfileInfo(),
+      refetchFollowers(),
+      recheckFollowedUser(),
+    ]);
+  }, []);
+
+  useEffect(() => {
+    isFollowed && handleUpdateProfileInfo();
+  }, [isFollowed]);
+
+  useEffect(() => {
+    if (isError || (!data && isSuccess)) {
+      navigate("/error/404");
+    }
+  }, [data, isError, isSuccess]);
 
   return (
     <>
@@ -142,7 +167,16 @@ const ProfilePage = () => {
               </div>
               <ul className={styles.action}>
                 {!isSelf && !isFollowedUser && (
-                  <Button btnType="primary" isRounded onClick={() => {}}>
+                  <Button
+                    btnType="primary"
+                    isRounded
+                    onClick={() =>
+                      followUser({
+                        user_id: userInfo.id,
+                        follower_id: profileId,
+                      })
+                    }
+                  >
                     <FaPlus /> Follow
                   </Button>
                 )}
@@ -154,7 +188,16 @@ const ProfilePage = () => {
                       showIcon
                       style={{ borderRadius: "8px" }}
                     />
-                    <Button btnType="primary" isRounded onClick={() => {}}>
+                    <Button
+                      btnType="primary"
+                      isRounded
+                      onClick={() =>
+                        unFollowUser({
+                          user_id: profileId,
+                          follower_id: userInfo.id,
+                        })
+                      }
+                    >
                       <RiUserUnfollowLine /> Unfollow
                     </Button>
                   </>

@@ -42,6 +42,7 @@ export const FollowAPI = createApi({
           method: "POST",
         };
       },
+      transformResponse: (res: any) => res.result.data,
     }),
     unfollowUser: builder.query<IOnFollowUserResponseType, IFollowUserPayload>({
       query: (payload) => {
@@ -51,6 +52,7 @@ export const FollowAPI = createApi({
           method: "DELETE",
         };
       },
+      transformResponse: (res: any) => res.result.data,
     }),
     checkFollowedUser: builder.query<
       IOnFollowUserResponseType,

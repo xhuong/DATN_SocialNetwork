@@ -10,12 +10,13 @@ const RecommendPage = () => {
       <Header />
       <MainLayout
         children={
-          <RecommendLayout
-            userId={userInfo.id}
-            is_includes_posts_of_following_users={true}
-            id_user_viewing={userInfo.id}
-            isSelf
-          />
+          // <RecommendLayout
+          //   userId={userInfo.id}
+          //   is_includes_posts_of_following_users={true}
+          //   id_user_viewing={userInfo.id}
+          //   isSelf
+          // />
+          <p>sdadsa</p>
         }
       />
     </>

@@ -1,4 +1,9 @@
-import { IsNumber } from "class-validator";
+import { IsEnum, IsNumber } from "class-validator";
+
+export enum ELikeType {
+  LIKE = "like",
+  DISLIKE = "dislike",
+}
 
 export class CreateLikeDto {
   @IsNumber()
@@ -6,4 +11,7 @@ export class CreateLikeDto {
 
   @IsNumber()
   user_id: number;
+
+  @IsEnum(ELikeType)
+  type: ELikeType;
 }

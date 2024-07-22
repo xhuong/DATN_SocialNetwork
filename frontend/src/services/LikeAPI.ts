@@ -18,72 +18,39 @@ export interface IPayloadSearchBookDto {
   publisher_id?: number;
 }
 
+export enum ELikeType {
+  LIKE = "like",
+  DISLIKE = "dislike",
+}
+
 export interface IPayloadLikeAPostDto {
   user_id: number;
   post_id: number;
+  type: ELikeType;
 }
 
 export const LikeAPI = createApi({
   reducerPath: "LikeAPI",
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),
   endpoints: (builder) => ({
-    likeAPost: builder.query<ILikeTypes, IPayloadLikeAPostDto>({
+    likePost: builder.query<ILikeTypes, IPayloadLikeAPostDto>({
       query: (payload) => ({
         url: "/like",
         body: payload,
         method: "POST",
       }),
     }),
-    dislikeAPost: builder.mutation<ILikeTypes, IPayloadLikeAPostDto>({
-      query: (payload) => ({
-        url: "/like/dislike",
-        body: payload,
-        method: "POST",
-      }),
-    }),
-
-    // getNewestBooks: builder.query<IBookTypes, null>({
-    //   query: () => "/post/newest",
-    // }),
-    // getBookById: builder.query<IBookTypes, { id: number }>({
-    //   query: ({ id }) => {
-    //     return `/book/${id}`;
-    //   },
-    // }),
-    // getListBooks: builder.query<IBookTypes, IPayloadSearchBookDto>({
+    // dislikeAPost: builder.mutation<ILikeTypes, IPayloadLikeAPostDto>({
     //   query: (payload) => ({
-    //     url: "/book",
+    //     url: "/like/dislike",
+    //     body: payload,
     //     method: "POST",
-    //     body: payload ?? {},
     //   }),
-    // }),
-    // getListOfBooksRecommendation: builder.query({
-    //   query: () => "/products/newest",
-    // }),
-    // getProductsByFilter: builder.query({
-    //   query: (body) =>
-    //     `/products/filter?idCategory=${body.idCategory}&size=${body.size}&color=${body.color}&minPrice=${body.minPrice}&maxPrice=${body.maxPrice}`,
-    // }),
-    // getTrendingProducts: builder.query({
-    //   query: () => "/products/trending",
-    // }),
-    // getListProductsOrdered: builder.query({
-    //   query: (body) => `/user/${body.idUser}/orders`,
-    // }),
-    // getProductById: builder.query({
-    //   query: (body) => `/product/${body.id}`,
-    // }),
-    // findProductsByName: builder.query({
-    //   query: (body) =>
-    //     `/products/find?idCategory=${body.idCategory}&keyword=${body.keyword}`,
-    // }),
-    // getAllProductOrdered: builder.query({
-    //   query: () => `/orders`,
-    // }),
-    // getAllProduct: builder.query({
-    //   query: () => `/products`,
     // }),
   }),
 });
 
-export const { useLazyLikeAPostQuery, useDislikeAPostMutation } = LikeAPI;
+export const {
+  useLazyLikePostQuery,
+  //  useDislikeAPostMutation
+} = LikeAPI;

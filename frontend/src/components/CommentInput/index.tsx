@@ -7,6 +7,7 @@ import { IPostProvider, PostContext } from "@/components/Post";
 import { IAddNewCommentDto } from "@/services/CommentAPI";
 
 import styles from "./index.module.scss";
+import { getUserInfo } from "@/utils/auth";
 
 function CommentInput({
   avatar,
@@ -20,6 +21,7 @@ function CommentInput({
   const inputRef = useRef<HTMLInputElement>(null);
   const { replyComment, setReplyComment }: IPostProvider =
     useContext(PostContext);
+  const userInfo = getUserInfo();
 
   useEffect(() => {
     if (replyComment?.parentCommentId) {
@@ -66,7 +68,7 @@ function CommentInput({
                 created_at: new Date().toISOString(),
                 parent_comment_id: null,
                 post_id: postId,
-                user_id: 2,
+                user_id: userInfo.id,
               };
               // if reply a comment
               if (replyComment?.id) {

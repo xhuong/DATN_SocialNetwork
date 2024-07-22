@@ -1,24 +1,12 @@
-import React, {
-  useEffect,
-  useState,
-  createContext,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useEffect, useState, createContext, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 import { IPostFE, IUserBE, mapPostListBEToPostListUI } from "@/utils/common";
 
-import {
-  useGetPostListByUserIdQuery,
-  useLazyGetPostListByUserIdQuery,
-} from "@/services/PostAPI";
+import { useLazyGetPostListByUserIdQuery } from "@/services/PostAPI";
 
-import {
-  useDislikeAPostMutation,
-  useLazyLikeAPostQuery,
-} from "@/services/LikeAPI";
+import { ELikeType, useLazyLikePostQuery } from "@/services/LikeAPI";
 
 import {
   IAddNewCommentDto,
@@ -36,8 +24,7 @@ import styles from "./index.module.scss";
 import { toast } from "react-toastify";
 
 export interface IPostListProvider {
-  handleLikeAPost: (userId: number, postId: number) => void;
-  handleDislikeAPost: (userId: number, postId: number) => void;
+  handleLikePost: (userId: number, postId: number, type: ELikeType) => void;
   handleComment: (comment: IAddNewCommentDto) => void;
   userInfo: IUserBE;
   userId: number;
@@ -45,8 +32,7 @@ export interface IPostListProvider {
 }
 
 export const PostListContext = createContext<IPostListProvider>({
-  handleLikeAPost: (userId: number, postId: number) => {},
-  handleDislikeAPost: (userId: number, postId: number) => {},
+  handleLikePost: (userId: number, postId: number, type: ELikeType) => {},
   handleComment: (comment: IAddNewCommentDto) => {},
   userInfo: defaultUserInfo,
   userId: -1,
@@ -73,35 +59,29 @@ function PostList({
 
   const [getPostList, { data, isSuccess }] = useLazyGetPostListByUserIdQuery();
 
-  const [likeAPost] = useLazyLikeAPostQuery();
-
-  const [dislikeAPost] = useDislikeAPostMutation();
+  const [likePost] = useLazyLikePostQuery();
 
   const [addNewComment] = useLazyAddNewCommentQuery();
 
-  const handleLikeAPost = useCallback(
-    async (userId: number, postId: number) => {
-      if (userId && postId) {
-        await likeAPost({ post_id: postId, user_id: id_user_viewing });
-        await getPostList({
-          id_user: userId,
-          id_user_viewing: userInfo.id,
-          is_includes_posts_of_following_users: isInclude,
+  const handleLikePost = useCallback(
+    async (userId: number, postId: number, type: ELikeType) => {
+      if (userId && postId && type) {
+        console.log(userId, postId, type);
+        await likePost({
+          type,
+          post_id: postId,
+          user_id: id_user_viewing,
         });
-      }
-    },
-    [userId, userInfo, isInclude]
-  );
-
-  const handleDislikeAPost = useCallback(
-    async (userId: number, postId: number) => {
-      if (userId && postId) {
-        await dislikeAPost({ post_id: postId, user_id: id_user_viewing });
-        await getPostList({
-          id_user: userId,
-          id_user_viewing: userInfo.id,
-          is_includes_posts_of_following_users: isInclude,
-        });
+        const clonePosts = [...postList];
+        const postIndex = clonePosts.findIndex((post) => post.id === postId);
+        if (type === ELikeType.LIKE) {
+          clonePosts[postIndex].isLiked = true;
+          clonePosts[postIndex].likeCount += 1;
+        } else if (type === ELikeType.DISLIKE) {
+          clonePosts[postIndex].isLiked = false;
+          clonePosts[postIndex].likeCount -= 1;
+        }
+        setPostList(clonePosts);
       }
     },
     [userId, userInfo, isInclude]
@@ -149,8 +129,7 @@ function PostList({
   }, [userId]);
 
   const defaultValue = {
-    handleLikeAPost,
-    handleDislikeAPost,
+    handleLikePost,
     handleComment,
     userInfo,
     id_user_viewing,
@@ -169,7 +148,7 @@ function PostList({
         {postList?.map((post) => {
           return (
             <React.Fragment key={post.id}>
-              <Post post={post} />
+              <Post post={post} avatar={userInfo.image_profile} />
             </React.Fragment>
           );
         })}

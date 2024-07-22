@@ -172,7 +172,7 @@ const mapCommentBEToCommentUI = (comments: ICommentBE[]) => {
       postId: comment.post_id,
       parentCommentId: comment.parent_comment_id,
       user: {
-        authorAvatar: "",
+        authorAvatar: comment.user.image_profile,
         userDisplayName: comment.user.name,
         userId: comment.user.id,
       },
