@@ -52,6 +52,12 @@
         border-color: transparent #a487db transparent transparent;
       }
     }
+    .messageContent.imageContent {
+      background-color: unset;
+      &::before {
+        display: none;
+      }
+    }
     &.myMessage {
       flex-direction: row-reverse;
       .messageContent::before {

@@ -21,6 +21,11 @@ import {
 } from "@/services/ChatAPI";
 import { IReceviedMessageBE } from "@/utils/chat";
 
+import {
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_UPLOAD_PRESET,
+} from "@/utils/constant";
+
 import styles from "./index.module.scss";
 
 interface IMessage {
@@ -118,6 +123,65 @@ const Chat = () => {
       setSelectedUser(user);
     });
     // user.hasNewMessages = false;
+  };
+
+  const handleSendImage = async (e: any) => {
+    const file = e.target.files[0];
+
+    // upload to server
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    try {
+      const response: any = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          body: formData,
+          method: "POST",
+        }
+      )
+        .then((res) => res.json())
+        .then((res) => {
+          // sending image url via socket
+          if (selectedUser) {
+            const content = res.url;
+            socket.emit("private message", {
+              content,
+              // to: selectedUser.userID,
+              to: selectedUser.socketId,
+              sendFromUser: userInfo.id,
+              receivedUserId: selectedUser.userId,
+            });
+
+            setSelectedUser((prevSelectedUser: any) => ({
+              ...prevSelectedUser,
+              messages: [
+                ...prevSelectedUser.messages,
+                { content, fromSelf: true },
+              ],
+            }));
+
+            const cloneUsers = [...users];
+            const data: any = cloneUsers.map((user: any) => {
+              // if (user?.userID === selectedUser.userID) {
+              if (user?.socketId === selectedUser.socketId) {
+                return {
+                  ...user,
+                  messages: [
+                    ...selectedUser.messages,
+                    { content, fromSelf: true },
+                  ],
+                };
+              } else {
+                return user;
+              }
+            });
+            setUsers(data);
+          }
+        });
+    } catch (error) {
+      throw new Error(`[CLIENT] [CHAT] error when uploading image: ${error}`);
+    }
   };
 
   useEffect(() => {
@@ -312,7 +376,11 @@ const Chat = () => {
         </Col>
         <Col sm={18} xl={18}>
           {selectedUser && (
-            <MessagePanel user={selectedUser} onMessage={onMessage} />
+            <MessagePanel
+              user={selectedUser}
+              onMessage={onMessage}
+              handleSendImage={handleSendImage}
+            />
           )}
         </Col>
       </Row>

@@ -4,8 +4,9 @@ import { openModal } from "@/redux/slices/modal";
 import pictureImg from "@/assets/images/leftside/picture.png";
 import laughImg from "@/assets/images/middleSide/laugh.png";
 
-import styles from "./index.module.scss";
 import { getUserInfo } from "@/utils/auth";
+
+import styles from "./index.module.scss";
 
 function YourThink() {
   const dispatch = useDispatch();
@@ -14,15 +15,15 @@ function YourThink() {
 
   const YOUR_THINK_ITEMS = [
     {
-      name: "Ảnh/video",
+      name: "Photo/video",
       imgURL: pictureImg,
     },
     {
-      name: "Ảnh/video",
+      name: "Photo/video",
       imgURL: pictureImg,
     },
     {
-      name: "Cảm xúc/hoạt động",
+      name: "Feel/activity",
       imgURL: laughImg,
     },
   ];
@@ -31,13 +32,13 @@ function YourThink() {
     <div className={styles.yourThink}>
       <div className={styles.yourThinkHeader}>
         <div className={styles.yourThinkImage}>
-          <img src={require("../../assets/images/users/default.png")} alt="" />
+          <img src={userInfo.image_profile} alt="" />
         </div>
         <div
           className={styles.yourThinkText}
           onClick={() => dispatch(openModal())}
         >
-          <span>Ấy ơi, bạn đang nghĩ gì thế?</span>
+          <span>How do you feel?</span>
         </div>
       </div>
       <ul className={styles.yourThinkFooter}>

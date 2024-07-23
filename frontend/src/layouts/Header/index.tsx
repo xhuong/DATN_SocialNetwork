@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import Chat from "@/layouts/ChatLayout/components/Chat";
 import { getUserInfo, logOut } from "@/utils/auth";
@@ -21,16 +21,17 @@ import {
   MdGroups,
 } from "./constant";
 
-import styles from "./index.module.scss";
 import { useLazyFindUsersByNameQuery } from "@/services/UserAPI";
 import { IUserResponseType } from "@/utils/user";
-import { Alert } from "antd";
+import { debounce } from "@/utils";
+
+import styles from "./index.module.scss";
 
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const [searchUsers, setSearchUsers] = useState<IUserResponseType[]>([]);
-  const [findUsersByName, { data: searchUsers, isSuccess, isFetching }] =
+  const [searchUsers, setSearchUsers] = useState<IUserResponseType[]>([]);
+  const [findUsersByName, { data: searchUsersData, isSuccess, isFetching }] =
     useLazyFindUsersByNameQuery();
 
   const userInfo = getUserInfo();
@@ -44,28 +45,27 @@ export default function Header() {
     navigate("/login");
   }, []);
 
-  const HEADER_PAGES = useMemo(
-    () => [
-      { path: "/", icon: <IoHomeOutline /> },
-      { path: "/recommend", icon: <BsPostcard /> },
-      { path: "/groups", icon: <MdGroups /> },
-      { path: "/message", icon: <LuMessageCircle /> },
-      { path: "/settings", icon: <IoSettingsOutline /> },
-    ],
-    []
-  );
+  const HEADER_PAGES = [
+    { path: "/", icon: <IoHomeOutline /> },
+    { path: "/recommend", icon: <BsPostcard /> },
+    { path: "/groups", icon: <MdGroups /> },
+    { path: "/message", icon: <LuMessageCircle /> },
+    { path: "/settings", icon: <IoSettingsOutline /> },
+  ];
 
-  const handleOnChange = useCallback((e: any) => {
-    setTimeout(async () => {
-      try {
-        const name = e.target.value.trim();
-        if (name) {
-          console.log("calling this after 100ms");
-          await findUsersByName({ name: name });
-        }
-      } catch (error) {}
-    }, 100);
-  }, []);
+  const handleOnChange = (e: any) => {
+    if (!e.target.value.trim()) {
+      setSearchUsers([]);
+    } else findUsersDebounced(e.target.value.trim());
+  };
+
+  const findUsersDebounced = debounce(async (name: string) => {
+    await findUsersByName({ name });
+  }, 200);
+
+  useEffect(() => {
+    setSearchUsers(searchUsersData || []);
+  }, [searchUsersData]);
 
   return (
     <div className={styles.header}>
@@ -83,9 +83,7 @@ export default function Header() {
             />
           </div>
           <div className={styles.headerSearchResult}>
-            {/* {!searchUsers && <p>Nothing to display...</p>} */}
-            {isFetching && <p>Searching user...</p>}
-            {!isFetching && searchUsers && (
+            {searchUsers && (
               <ul className={styles.resultList}>
                 {searchUsers.map((user: IUserResponseType) => (
                   <li className={styles.resultItem}>

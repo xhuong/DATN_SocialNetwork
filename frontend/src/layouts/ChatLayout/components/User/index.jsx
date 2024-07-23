@@ -16,7 +16,7 @@ const User = ({ user, selected, onSelect }) => (
         {user.connected ? "online" : "offline"}
       </div>
     </div>
-    {user.hasNewMessages && <div className={styles.newMessages}>!</div>}
+    {/* {user.hasNewMessages && <div className={styles.newMessages}>!</div>} */}
   </div>
 );
 

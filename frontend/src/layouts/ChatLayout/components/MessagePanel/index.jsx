@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Input } from "antd";
+import { Form, Input } from "antd";
+import { useForm } from "antd/lib/form/Form";
 
 import defaultAvatar from "@/assets/images/users/default.png";
 import UserProfile from "@/components/UserProfile";
@@ -9,9 +10,10 @@ import { IoIosSend } from "react-icons/io";
 
 import styles from "./index.module.scss";
 
-const MessagePanel = ({ user, onMessage }) => {
+const MessagePanel = ({ user, onMessage, handleSendImage }) => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState(user.messages || []);
+  const [form] = useForm();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -21,6 +23,11 @@ const MessagePanel = ({ user, onMessage }) => {
       onMessage(input);
       setInput("");
     }
+  };
+
+  const handleFileChange = (e) => {
+    handleSendImage(e);
+    form.resetFields();
   };
 
   useEffect(() => {
@@ -59,7 +66,17 @@ const MessagePanel = ({ user, onMessage }) => {
                 </div>
               </div>
             )}
-            <div className={styles.messageContent}>{message.content}</div>
+            <div
+              className={`${styles.messageContent} ${
+                message.content.includes("http") ? styles.imageContent : null
+              }`}
+            >
+              {message.content.includes("http") ? (
+                <img src={message.content} />
+              ) : (
+                message.content
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -85,6 +102,11 @@ const MessagePanel = ({ user, onMessage }) => {
             </Button>
           </div>
         </form>
+        <Form form={form}>
+          <Form.Item>
+            <Input type="file" accept="image/*" onChange={handleFileChange} />
+          </Form.Item>
+        </Form>
       </div>
     </>
   );

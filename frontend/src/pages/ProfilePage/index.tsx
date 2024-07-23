@@ -11,6 +11,7 @@ import PostList from "@/layouts/PostList";
 import Button from "@/components/Button";
 
 import {
+  DEFAULT_BACKGROUND_URL,
   FaPlus,
   IoIosCamera,
   IoPencil,
@@ -135,15 +136,11 @@ const ProfilePage = () => {
             <div
               className={styles.blurBackground}
               style={{
-                backgroundImage:
-                  "url(https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+                backgroundImage: `url(${DEFAULT_BACKGROUND_URL})`,
               }}
             ></div>
             <div className={styles.backgroundCover}>
-              <img
-                src="https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt=""
-              />
+              <img src={DEFAULT_BACKGROUND_URL} alt="" />
             </div>
           </div>
           <div className={styles.myProfileContainer}>
@@ -267,7 +264,7 @@ const ProfilePage = () => {
                       <li className={styles.introduceItem}>
                         <TiHome className={styles.icon} />
                         <span>
-                          Live in <b>Tuyen Hoa</b>
+                          Live in <b>{userInfo.address}</b>
                         </span>
                       </li>
                       <li className={styles.introduceItem}>
