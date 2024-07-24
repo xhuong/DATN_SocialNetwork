@@ -1,3 +1,5 @@
+import ReactLoading from "react-loading";
+
 export default function Loading() {
   return (
     <div
@@ -14,14 +16,11 @@ export default function Loading() {
         backgroundColor: "rgba(0,0,0,.2)",
       }}
     >
-      <span
-        style={{
-          fontSize: "24px",
-          color: "#ffffff",
-        }}
-      >
-        Loading...
-      </span>
+      <ReactLoading
+        color={"var(--purple-color)"}
+        height={"40px"}
+        width={"40px"}
+      />
     </div>
   );
 }

@@ -65,7 +65,8 @@
     }
   }
   .postFooter {
-    padding: 16px 16px 0;
+    border-bottom: 1px solid #d3d3d3;
+    padding: 16px 16px 8px;
     .postFooterInfo {
       display: flex;
       justify-content: space-between;
