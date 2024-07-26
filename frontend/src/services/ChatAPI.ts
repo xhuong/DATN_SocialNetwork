@@ -1,8 +1,10 @@
 import {
+  IConversationResponseType,
   IMessageResponseType,
   IMessageResponseTypes,
   IMessagesResponseTypes,
   IPayloadChat,
+  IPayloadConversation,
 } from "@/utils/chat";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -32,6 +34,16 @@ export const ChatAPI = createApi({
         method: "POST",
       }),
     }),
+    createConversation: builder.query<
+      IConversationResponseType,
+      IPayloadConversation
+    >({
+      query: (body) => ({
+        url: "conversation",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -39,4 +51,5 @@ export const {
   useLazySaveMessageQuery,
   useLazyGetAllMessageFromConversationQuery,
   useGetAllMessageFromConversationQuery,
+  useLazyCreateConversationQuery,
 } = ChatAPI;

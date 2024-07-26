@@ -103,16 +103,32 @@ const ProfilePage = () => {
     currentUserId: number,
     type: "follow" | "unfollow"
   ) => {
-    type === "follow" &&
-      (await followUser({
-        user_id: profileId,
-        follower_id: currentUserId,
-      }));
-    type === "unfollow" &&
-      (await unFollowUser({
-        user_id: profileId,
-        follower_id: userInfo.id,
-      }));
+    switch (type) {
+      case "follow":
+        await followUser({
+          user_id: profileId,
+          follower_id: currentUserId,
+        });
+        break;
+      case "unfollow":
+        await unFollowUser({
+          user_id: profileId,
+          follower_id: userInfo.id,
+        });
+        break;
+      default:
+        break;
+    }
+    // type === "follow" &&
+    //   (await followUser({
+    //     user_id: profileId,
+    //     follower_id: currentUserId,
+    //   }));
+    // type === "unfollow" &&
+    //   (await unFollowUser({
+    //     user_id: profileId,
+    //     follower_id: userInfo.id,
+    //   }));
     handleUpdateProfileInfo();
   };
 

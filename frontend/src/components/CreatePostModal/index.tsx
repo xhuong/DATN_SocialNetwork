@@ -17,14 +17,13 @@ import {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
 } from "@/utils/constant";
+import { EMOTIONS } from "./constant";
 
 import styles from "./index.module.scss";
-import { EMOTIONS } from "./constant";
 
 interface ICreatePostModalPropsType {
   isShow: boolean;
   onSuccess: () => void;
-  feeling?: string;
 }
 
 interface ICreatePostFormValue {
@@ -32,11 +31,7 @@ interface ICreatePostFormValue {
   emotion?: string;
 }
 
-function CreatePostModal({
-  isShow,
-  onSuccess,
-  feeling,
-}: ICreatePostModalPropsType) {
+function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
   const [createPost] = useLazyCreatePostQuery();
   const [uploadImage] = useLazyUploadImagesQuery();
   const userInfo = getUserInfo();

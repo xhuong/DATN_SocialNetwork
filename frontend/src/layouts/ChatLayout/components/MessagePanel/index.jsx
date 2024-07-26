@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form, Input } from "antd";
+import { Input } from "antd";
 import { useForm } from "antd/lib/form/Form";
 
 import defaultAvatar from "@/assets/images/users/default.png";
@@ -59,10 +59,7 @@ const MessagePanel = ({ user, onMessage, handleSendImage }) => {
             {displaySender(message, index) && (
               <div className={styles.sender}>
                 <div className={styles.avatar}>
-                  <img
-                    src={require("@/assets/images/users/default.png")}
-                    alt={user.username}
-                  />
+                  <img src={defaultAvatar} alt={user.username} />
                 </div>
               </div>
             )}
@@ -84,7 +81,7 @@ const MessagePanel = ({ user, onMessage, handleSendImage }) => {
       <div className={styles.chatFooter}>
         <form onSubmit={handleSubmit} className={styles.chatForm}>
           <Input.TextArea
-            autoSize
+            autoSize={false}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
@@ -98,15 +95,27 @@ const MessagePanel = ({ user, onMessage, handleSendImage }) => {
               htmlType="submit"
               onClick={() => {}}
             >
-              <IoIosSend size={24} />
+              <IoIosSend size={28} />
             </Button>
           </div>
         </form>
-        <Form form={form}>
-          <Form.Item>
-            <Input type="file" accept="image/*" onChange={handleFileChange} />
-          </Form.Item>
-        </Form>
+        {/* <Form form={form}>
+          <Form.Item> */}
+        <div className="" style={{ flex: 1 }}>
+          {/* <label htmlFor="upload-photo">
+            <CiImageOn size={36} />
+          </label> */}
+
+          <Input
+            id="upload-photo"
+            style={{ border: "none" }}
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </div>
+        {/* </Form.Item>
+        </Form> */}
       </div>
     </>
   );

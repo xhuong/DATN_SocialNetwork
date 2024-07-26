@@ -16,6 +16,7 @@ import {
   useLazyGetFollowingUsersQuery,
 } from "@/services/FollowAPI";
 import {
+  useLazyCreateConversationQuery,
   useLazyGetAllMessageFromConversationQuery,
   useLazySaveMessageQuery,
 } from "@/services/ChatAPI";
@@ -69,6 +70,7 @@ const Chat = () => {
   const [getMessages] = useLazyGetAllMessageFromConversationQuery({
     refetchOnFocus: true,
   });
+  const [createConversation] = useLazyCreateConversationQuery();
 
   const onCloseModal = () => {
     dispatch(closeChatModal());
@@ -106,7 +108,16 @@ const Chat = () => {
   };
 
   const onSelectUser = async (user: ISelectedUser) => {
-    console.log("🚀 ~ onSelectUser ~ user:", user);
+    // check is exist conversationid or not?
+    // if not, calling api to add conversation record
+    if (user.userId !== userInfo.id) {
+      await createConversation({
+        name: `${userInfo.name} ${user.username}`,
+        first_user_id: userInfo.id,
+        second_user_id: user.userId,
+        last_read_timestamp: new Date().toISOString(),
+      });
+    }
     // calling api to retrieved messages from server
 
     // user.messages = [...mapMessagesBEToMessagesFE(messages || [])];

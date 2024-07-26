@@ -20,6 +20,7 @@ import { CommentModule } from "./comment/comment.module";
 import { MessageModule } from "./message/message.module";
 import { MessageGateway } from "./message/message.gateway";
 import { RecommendModule } from './recommend/recommend.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { RecommendModule } from './recommend/recommend.module';
     CommentModule,
     MessageModule,
     RecommendModule,
+    ConversationModule,
   ],
   controllers: [AppController],
   providers: [

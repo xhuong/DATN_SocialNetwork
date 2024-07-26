@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Alert, Form } from "antd";
+import { Form } from "antd";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import Countdown from "@/components/CountDown";
 
 import { hideLoading, showLoading } from "@/redux/slices/loading";
 import { IUserBEOmitId } from "@/utils/user";
 
 import { useCreateNewUserMutation } from "@/services/UserAPI";
+import { DEFAULT_AVATAR } from "@/pages/constant";
 
 import styles from "./index.module.scss";
-import Countdown from "@/components/CountDown";
 interface IAddUserFormValue {
   name: string;
   username: string;
@@ -39,7 +40,7 @@ function RegisterPage() {
         password: values.password,
         phone_number: values.phone,
         address: values.address,
-        image_profile: "",
+        image_profile: DEFAULT_AVATAR,
         role_id: NORMAL_USER_ROLE,
       };
       await createNewUser(payload)

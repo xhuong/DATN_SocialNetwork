@@ -1,6 +1,6 @@
-import { Alert, AlertProps } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Alert, AlertProps } from "antd";
 
 interface ICountDown extends AlertProps {
   redirectURL: string;

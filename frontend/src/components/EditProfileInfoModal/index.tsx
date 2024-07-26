@@ -21,25 +21,11 @@ function EditProfileInfoModal({
   userId: number;
   onCancel: () => void;
 }) {
+  const userInfo = getUserInfo();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const [getProfileInfo, { data, isSuccess }] = useLazyGetProfileInfoQuery();
   const [updateProfileInfo] = useUpdateProfileInfoMutation();
-
-  useEffect(() => {
-    isShow && getProfileInfo({ userId });
-  }, [isShow]);
-
-  const userInfo = getUserInfo();
-  useEffect(() => {
-    if (data && isSuccess) {
-      const convertData = {
-        name: data.name,
-        address: data.address,
-      };
-      form.setFieldsValue(convertData);
-    }
-  }, [data, isSuccess, form, isShow]);
 
   const onSubmit = async (values: any) => {
     try {
@@ -66,6 +52,20 @@ function EditProfileInfoModal({
     onCancel();
     form.resetFields();
   };
+
+  useEffect(() => {
+    isShow && getProfileInfo({ userId });
+  }, [isShow]);
+
+  useEffect(() => {
+    if (data && isSuccess) {
+      const convertData = {
+        name: data.name,
+        address: data.address,
+      };
+      form.setFieldsValue(convertData);
+    }
+  }, [data, isSuccess, form, isShow]);
 
   return (
     <Modal

@@ -6,6 +6,13 @@ interface IMessageResponseType {
     status: number;
   };
 }
+export interface IConversationResponseType {
+  status: number;
+  message: string;
+  result: {
+    data: IReceivedConversationBE;
+  };
+}
 
 interface IMessageResponseTypes {
   status: number;
@@ -34,6 +41,14 @@ interface IReceviedMessageBE {
   is_own_message: boolean;
 }
 
+interface IReceivedConversationBE {
+  id: number;
+  name: string;
+  last_read_timestamp: string;
+  first_user_id: number;
+  second_user_id: number;
+}
+
 export interface IReceviedMessageFE {
   id: number;
   sendUserId: number;
@@ -48,6 +63,13 @@ interface IPayloadChat {
   received_user_id: number;
   message_text: string;
   send_datetime: string;
+}
+
+export interface IPayloadConversation {
+  name: string;
+  first_user_id: number;
+  second_user_id: number;
+  last_read_timestamp: string;
 }
 
 export type {

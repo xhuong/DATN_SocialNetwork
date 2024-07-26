@@ -58,6 +58,7 @@ export class MessageService {
       // find conversation first
       const { sender_user_id, second_user_id } = getMessageDto;
       const ids = [sender_user_id, second_user_id];
+      let data = [];
       const conversationId = await this.prisma.conversation
         .findFirst({
           where: {
@@ -69,30 +70,42 @@ export class MessageService {
             },
           },
         })
-        .then((res) => res.id);
+        .then((res) => res?.id || undefined)
+        .catch((err) => {
+          console.log("e", err);
+        });
 
-      console.log("conversationId", conversationId);
+      if (conversationId) {
+        data = await this.prisma.message.findMany({
+          where: {
+            conversation_id: conversationId,
+          },
+        });
 
-      const data = await this.prisma.message.findMany({
-        where: {
-          conversation_id: conversationId,
-        },
-      });
+        const cloneRes =
+          data.length > 0
+            ? data.map((message) => ({
+                ...message,
+                is_own_message: message.send_user_id === sender_user_id,
+              }))
+            : [];
 
-      const cloneRes = data.map((message) => ({
-        ...message,
-        is_own_message: message.send_user_id === sender_user_id,
-      }));
-
-      // console.log("🚀 ~ MessageService ~ cloneRes ~ cloneRes:", cloneRes);
-
-      return res.status(200).json({
-        status: 200,
-        message: "Get all messages successfully.",
-        result: {
-          data: cloneRes,
-        },
-      });
+        return res.status(200).json({
+          status: 200,
+          message: "Get all messages successfully.",
+          result: {
+            data: cloneRes,
+          },
+        });
+      } else {
+        return res.status(200).json({
+          status: 200,
+          message: "Get all messages successfully.",
+          result: {
+            data: [],
+          },
+        });
+      }
     } catch (error) {
       return {
         status: 400,
