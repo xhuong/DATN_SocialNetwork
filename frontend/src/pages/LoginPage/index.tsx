@@ -39,13 +39,13 @@ function LoginPage() {
         const { data } = response;
         if (data?.status === 400) {
           toast.error(data?.message, {
-            autoClose: 5000,
+            autoClose: 1000,
             theme: "light",
           });
         }
         if (data?.status === 200) {
           toast.success(data?.message, {
-            autoClose: 2000,
+            autoClose: 1000,
             theme: "light",
           });
           const { access_token, user_info } = data.result.data;

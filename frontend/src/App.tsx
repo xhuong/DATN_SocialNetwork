@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
@@ -12,6 +11,7 @@ import RegisterPage from "@/pages/RegisterPage";
 import RecommendPage from "@/pages/RecommendPage";
 import ProfilePage from "@/pages/ProfilePage";
 import PageNotFound from "@/pages/PageNotFound";
+import ContactPage from "@/pages/ContactPage";
 
 import Loading from "@/components/Loading";
 import { routerPaths } from "./constant";
@@ -55,6 +55,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={routerPaths.contactPage}
+              element={
+                <ProtectedRoute>
+                  <ContactPage />
                 </ProtectedRoute>
               }
             />

@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "antd";
-import { useForm } from "antd/lib/form/Form";
 
 import defaultAvatar from "@/assets/images/users/default.png";
 import UserProfile from "@/components/UserProfile";
@@ -11,9 +10,9 @@ import { IoIosSend } from "react-icons/io";
 import styles from "./index.module.scss";
 
 const MessagePanel = ({ user, onMessage, handleSendImage }) => {
+  const [inputKey, setInputKey] = useState(Date.now());
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState(user.messages || []);
-  const [form] = useForm();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -27,7 +26,7 @@ const MessagePanel = ({ user, onMessage, handleSendImage }) => {
 
   const handleFileChange = (e) => {
     handleSendImage(e);
-    form.resetFields();
+    setInputKey(Date.now());
   };
 
   useEffect(() => {
@@ -99,23 +98,13 @@ const MessagePanel = ({ user, onMessage, handleSendImage }) => {
             </Button>
           </div>
         </form>
-        {/* <Form form={form}>
-          <Form.Item> */}
-        <div className="" style={{ flex: 1 }}>
-          {/* <label htmlFor="upload-photo">
-            <CiImageOn size={36} />
-          </label> */}
-
-          <Input
-            id="upload-photo"
-            style={{ border: "none" }}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </div>
-        {/* </Form.Item>
-        </Form> */}
+        <Input
+          id="upload-photo"
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          key={inputKey}
+        />
       </div>
     </>
   );

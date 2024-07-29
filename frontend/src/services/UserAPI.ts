@@ -1,4 +1,8 @@
-import { IUserBEOmitId, IUserResponseType } from "@/utils/user";
+import {
+  IUserBEContactType,
+  IUserBEOmitId,
+  IUserResponseType,
+} from "@/utils/user";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const BASE_URL = "/user";
@@ -7,6 +11,12 @@ export const UserAPI = createApi({
   reducerPath: "UserAPI",
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),
   endpoints: (builder) => ({
+    getContactUsers: builder.query<IUserBEContactType[], { userId: number }>({
+      query: ({ userId }) => ({
+        url: `${BASE_URL}/get-contact-users/${userId}`,
+      }),
+      transformResponse: (res: any) => res.result.data,
+    }),
     getProfileInfo: builder.query<IUserResponseType, { userId: number }>({
       query: ({ userId }) => ({
         url: `${BASE_URL}/get-profile-info/${userId}`,
@@ -59,4 +69,6 @@ export const {
   useUpdateAvatarMutation,
   useCreateNewUserMutation,
   useLazyFindUsersByNameQuery,
+  useGetContactUsersQuery,
+  useLazyGetContactUsersQuery,
 } = UserAPI;

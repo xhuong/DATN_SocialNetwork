@@ -88,28 +88,23 @@
   width: 100%;
   padding: 0 8px;
   display: flex;
+  flex-direction: column;
+  row-gap: 8px;
 
   .chatForm {
     display: flex;
     column-gap: 2px;
-    flex: 2;
+    width: 100%;
     textarea {
       flex: 1;
       height: 60px;
       font-size: 1.8rem;
     }
     .sendButton {
-      align-self: flex-end;
-      // height: 100%;
-      // width: 80px;
-      // button {
-      //   height: 100%;
-      // }
+      width: 80px;
+      button {
+        height: 100%;
+      }
     }
   }
-  // #upload-photo {
-  //   opacity: 0;
-  //   position: absolute;
-  //   z-index: -1;
-  // }
 }

@@ -13,3 +13,8 @@ export interface IUserResponseType
   extends Omit<IUserBE, "password" | "role_id" | "user_name"> {}
 
 export interface IUserBEOmitId extends Omit<IUserBE, "id"> {}
+
+export interface IUserBEContactType
+  extends Omit<IUserBE, "user_name" | "password" | "phone_number"> {
+  is_followed: boolean;
+}

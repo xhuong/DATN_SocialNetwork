@@ -54,6 +54,10 @@ export class UsersController {
   getProfileInfo(@Param("id") id: string, @Res() response: Response) {
     return this.usersService.getProfileInfo(+id, response);
   }
+  @Get("get-contact-users/:id")
+  getContactUsers(@Param("id") id: string, @Res() response: Response) {
+    return this.usersService.getContactUsers(+id, response);
+  }
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)

@@ -50,8 +50,42 @@ export class UsersService {
     }
   }
 
+  async getContactUsers(userId: number, response: Response) {
+    try {
+      const users = await this.prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          address: true,
+          image_profile: true,
+          role_id: true,
+          followers: true,
+        },
+      });
+
+      if (users) {
+        const cloneUsers = [...users];
+        const data = cloneUsers.map(({ followers, ...item }) => ({
+          ...item,
+          is_followed: followers.some((user) => user.follower_id === userId),
+        }));
+        return response.status(200).json({
+          status: 200,
+          message: "Get all users successfully",
+          result: {
+            data,
+          },
+        });
+      }
+    } catch (error) {
+      return response.status(400).json({
+        status: 400,
+        message: error,
+      });
+    }
+  }
+
   async findUsersByName(name: string, response: Response) {
-    console.log("🚀 ~ UsersService ~ findUsersByName ~ name:", name);
     try {
       const users = await this.prisma.user.findMany({
         where: {

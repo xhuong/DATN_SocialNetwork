@@ -51,6 +51,7 @@ export default function Header() {
     { path: "/groups", icon: <MdGroups /> },
     { path: "/message", icon: <LuMessageCircle /> },
     { path: "/settings", icon: <IoSettingsOutline /> },
+    { path: "/contact", icon: <MdGroups /> },
   ];
 
   const handleOnChange = (e: any) => {
