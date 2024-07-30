@@ -1,4 +1,3 @@
-// src/utils/auth.js
 import { IUserBE } from "@/utils/common";
 import { jwtDecode } from "jwt-decode";
 

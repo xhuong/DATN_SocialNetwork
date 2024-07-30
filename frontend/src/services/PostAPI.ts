@@ -80,47 +80,6 @@ export const PostAPI = createApi({
         };
       },
     }),
-    // getNewestBooks: builder.query<IBookTypes, null>({
-    //   query: () => "/post/newest",
-    // }),
-    // getBookById: builder.query<IBookTypes, { id: number }>({
-    //   query: ({ id }) => {
-    //     return `/book/${id}`;
-    //   },
-    // }),
-    // getListBooks: builder.query<IBookTypes, IPayloadSearchBookDto>({
-    //   query: (payload) => ({
-    //     url: "/book",
-    //     method: "POST",
-    //     body: payload ?? {},
-    //   }),
-    // }),
-    // getListOfBooksRecommendation: builder.query({
-    //   query: () => "/products/newest",
-    // }),
-    // getProductsByFilter: builder.query({
-    //   query: (body) =>
-    //     `/products/filter?idCategory=${body.idCategory}&size=${body.size}&color=${body.color}&minPrice=${body.minPrice}&maxPrice=${body.maxPrice}`,
-    // }),
-    // getTrendingProducts: builder.query({
-    //   query: () => "/products/trending",
-    // }),
-    // getListProductsOrdered: builder.query({
-    //   query: (body) => `/user/${body.idUser}/orders`,
-    // }),
-    // getProductById: builder.query({
-    //   query: (body) => `/product/${body.id}`,
-    // }),
-    // findProductsByName: builder.query({
-    //   query: (body) =>
-    //     `/products/find?idCategory=${body.idCategory}&keyword=${body.keyword}`,
-    // }),
-    // getAllProductOrdered: builder.query({
-    //   query: () => `/orders`,
-    // }),
-    // getAllProduct: builder.query({
-    //   query: () => `/products`,
-    // }),
   }),
 });
 

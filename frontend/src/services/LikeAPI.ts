@@ -40,17 +40,7 @@ export const LikeAPI = createApi({
         method: "POST",
       }),
     }),
-    // dislikeAPost: builder.mutation<ILikeTypes, IPayloadLikeAPostDto>({
-    //   query: (payload) => ({
-    //     url: "/like/dislike",
-    //     body: payload,
-    //     method: "POST",
-    //   }),
-    // }),
   }),
 });
 
-export const {
-  useLazyLikePostQuery,
-  //  useDislikeAPostMutation
-} = LikeAPI;
+export const { useLazyLikePostQuery } = LikeAPI;
