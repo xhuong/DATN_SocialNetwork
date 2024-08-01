@@ -5,6 +5,7 @@ const routerPaths = {
   loginPage: "/login",
   registerPage: "/register",
   contactPage: "/contact",
+  savedPostPage: "/saved-posts",
   pageNotFound: "*",
   page404: "/error/404",
 };

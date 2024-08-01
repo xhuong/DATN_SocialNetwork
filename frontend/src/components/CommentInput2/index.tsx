@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef } from "react";
 
 import { FaCommentSlash } from "react-icons/fa6";
 
-import { IPostProvider, PostContext } from "@/components/Post";
+import { IPost2Provider, Post2Context } from "@/components/Post2";
 
 import { IAddNewCommentDto } from "@/services/CommentAPI";
 
@@ -10,7 +10,7 @@ import { getUserInfo } from "@/utils/auth";
 
 import styles from "./index.module.scss";
 
-function CommentInput({
+function CommentInput2({
   avatar,
   postId,
   onSubmit,
@@ -20,8 +20,8 @@ function CommentInput({
   onSubmit: (comment: IAddNewCommentDto) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { replyComment, setReplyComment }: IPostProvider =
-    useContext(PostContext);
+  const { replyComment, setReplyComment }: IPost2Provider =
+    useContext(Post2Context);
   const userInfo = getUserInfo();
 
   useEffect(() => {
@@ -86,4 +86,4 @@ function CommentInput({
   );
 }
 
-export default CommentInput;
+export default CommentInput2;

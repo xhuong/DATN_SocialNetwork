@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Chat from "@/layouts/ChatLayout/components/Chat";
 import { getUserInfo, logOut } from "@/utils/auth";
@@ -15,15 +15,16 @@ import {
   IoHomeOutline,
   IoIosSearch,
   IoNotificationsOutline,
-  IoSettingsOutline,
   LuLogOut,
-  LuMessageCircle,
   MdGroups,
 } from "./constant";
 
 import { useLazyFindUsersByNameQuery } from "@/services/UserAPI";
 import { IUserResponseType } from "@/utils/user";
 import { debounce } from "@/utils";
+import { BsPostcardHeart } from "react-icons/bs";
+import { RootState } from "@/redux/store";
+import { resetCount } from "@/redux/slices/notification";
 
 import styles from "./index.module.scss";
 
@@ -33,6 +34,9 @@ export default function Header() {
   const [searchUsers, setSearchUsers] = useState<IUserResponseType[]>([]);
   const [findUsersByName, { data: searchUsersData, isSuccess, isFetching }] =
     useLazyFindUsersByNameQuery();
+  const notificationCount = useSelector(
+    (state: RootState) => state.notification.count
+  );
 
   const userInfo = getUserInfo();
 
@@ -48,10 +52,8 @@ export default function Header() {
   const HEADER_PAGES = [
     { path: "/", icon: <IoHomeOutline /> },
     { path: "/recommend", icon: <BsPostcard /> },
-    { path: "/groups", icon: <MdGroups /> },
-    { path: "/message", icon: <LuMessageCircle /> },
-    { path: "/settings", icon: <IoSettingsOutline /> },
     { path: "/contact", icon: <MdGroups /> },
+    { path: "/saved-posts", icon: <BsPostcardHeart /> },
   ];
 
   const handleOnChange = (e: any) => {
@@ -114,9 +116,20 @@ export default function Header() {
       <div className={styles.headerProfile}>
         <ul className={styles.headerProfileList}>
           <li className={styles.headerProfileItem}>
-            <div className={styles.headerIcon} onClick={showChatModal}>
+            <div
+              className={styles.headerIcon}
+              onClick={() => {
+                showChatModal();
+                dispatch(resetCount());
+              }}
+            >
               <AiOutlineMessage />
             </div>
+            {!!notificationCount && (
+              <span className={styles.headerProfileItemCount}>
+                {notificationCount}
+              </span>
+            )}
           </li>
           <li className={styles.headerProfileItem}>
             <div className={styles.headerIcon}>

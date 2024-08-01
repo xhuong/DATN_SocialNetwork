@@ -3,8 +3,8 @@ import { Button as AntButton, Col, Row } from "antd";
 
 import { ICommentFE, IPostFE, calculateTime } from "@/utils/common";
 
-import CommentInput from "@/components/CommentInput";
-import PostComments from "@/components/PostComments";
+import CommentInput2 from "@/components/CommentInput2";
+import PostComments2 from "@/components/PostComments2";
 
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { FaRegComment } from "react-icons/fa6";
@@ -13,25 +13,26 @@ import { IoEarth } from "react-icons/io5";
 
 import {
   ESavePostType,
-  IPostListProvider,
-  PostListContext,
-} from "@/layouts/PostList";
+  IPostList2Provider,
+  PostList2Context,
+} from "@/layouts/PostList2";
 
 import { ELikeType } from "@/services/LikeAPI";
+import { BookMarkSvg } from "@/assets/icons";
 
 import styles from "./index.module.scss";
 
-export interface IPostProvider {
+export interface IPost2Provider {
   replyComment: any;
   setReplyComment: any;
 }
 
-export const PostContext = createContext<IPostProvider>({
+export const Post2Context = createContext<IPost2Provider>({
   replyComment: null,
   setReplyComment: () => {},
 });
 
-function Post({
+function Post2({
   post,
   avatar,
   currentUserId,
@@ -58,8 +59,8 @@ function Post({
     handleLikePost,
     handleComment,
     handleSavePost,
-    userId,
-  }: IPostListProvider = useContext(PostListContext);
+    idUser,
+  }: IPostList2Provider = useContext(PostList2Context);
 
   const [replyComment, setReplyComment] = useState<ICommentFE | null>();
 
@@ -69,7 +70,7 @@ function Post({
   };
 
   return (
-    <PostContext.Provider value={{ ...valueContext }}>
+    <Post2Context.Provider value={{ ...valueContext }}>
       <div className={styles.post}>
         <div className={styles.postHeader}>
           <div className={styles.postAuthor}>
@@ -105,7 +106,7 @@ function Post({
                   handleSavePost(id, currentUserId, ESavePostType.UNSAVE)
                 }
               >
-                <svg
+                {/* <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -116,7 +117,8 @@ function Post({
                     d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z"
                     clipRule="evenodd"
                   />
-                </svg>
+                </svg> */}
+                <BookMarkSvg />
               </AntButton>
             ) : (
               <AntButton
@@ -202,7 +204,7 @@ function Post({
                 className={styles.postFooterActionItem}
                 onClick={() =>
                   handleLikePost(
-                    userId,
+                    idUser,
                     id,
                     isLiked ? ELikeType.DISLIKE : ELikeType.LIKE
                   )
@@ -246,11 +248,11 @@ function Post({
             </Col>
           </Row>
         </div>
-        <PostComments postComments={comments} />
-        <CommentInput avatar={avatar} postId={id} onSubmit={handleComment} />
+        <PostComments2 postComments={comments} />
+        <CommentInput2 avatar={avatar} postId={id} onSubmit={handleComment} />
       </div>
-    </PostContext.Provider>
+    </Post2Context.Provider>
   );
 }
 
-export default Post;
+export default Post2;

@@ -151,7 +151,7 @@ export default function ContactPage() {
           type="success"
           style={{
             marginBottom: "24px",
-            borderRadius: "8px",
+            borderRadius: "4px",
           }}
         />
         <Table

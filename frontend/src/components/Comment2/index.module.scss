@@ -1,0 +1,43 @@
+.comment {
+  display: flex;
+  column-gap: 8px;
+  margin-bottom: 16px;
+  .commentAvatar {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .commentInfo {
+    .commentTop {
+      border-radius: 16px;
+      padding: 4px 16px;
+      margin-bottom: 4px;
+      background-color: var(--gray-light-color);
+      .userName {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+      .commentContent {
+        font-size: 1.4rem;
+      }
+    }
+  }
+  .commentAction {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-left: 16px;
+    .likeAction,
+    .commentAction {
+      cursor: pointer;
+    }
+    .likeAction:hover,
+    .commentAction:hover {
+      text-decoration: underline;
+    }
+    .commentAction {
+      margin-left: 8px;
+    }
+  }
+}

@@ -12,6 +12,7 @@ import RecommendPage from "@/pages/RecommendPage";
 import ProfilePage from "@/pages/ProfilePage";
 import PageNotFound from "@/pages/PageNotFound";
 import ContactPage from "@/pages/ContactPage";
+import SavedPostPage from "@/pages/SavedPostPage";
 
 import Loading from "@/components/Loading";
 import { routerPaths } from "./constant";
@@ -53,6 +54,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ContactPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={routerPaths.savedPostPage}
+              element={
+                <ProtectedRoute>
+                  <SavedPostPage />
                 </ProtectedRoute>
               }
             />

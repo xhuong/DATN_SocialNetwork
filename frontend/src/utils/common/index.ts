@@ -42,6 +42,7 @@ export interface IPostBE {
   Like: ILikeBE[] | [];
   isLiked: boolean;
   feeling?: string;
+  isSavedPost: boolean;
 }
 
 export interface IImageBE {
@@ -67,6 +68,7 @@ export interface IPostFE {
   comments: ICommentFE[] | [];
   isLiked: boolean;
   feeling?: string;
+  isSavedPost: boolean;
 }
 
 export type ICommentFE = {
@@ -215,6 +217,7 @@ export const mapPostListBEToPostListUI = (posts: IPostBE[]): IPostFE[] => {
     likeCount: post.Like?.length || 0,
     shareCount: 0,
     isLiked: post.isLiked,
+    isSavedPost: post.isSavedPost,
   }));
 };
 

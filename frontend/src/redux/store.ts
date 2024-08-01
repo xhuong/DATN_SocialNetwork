@@ -13,11 +13,13 @@ import { UserAPI } from "@/services/UserAPI";
 import loading from "@/redux/slices/loading";
 import modal from "@/redux/slices/modal";
 import chatModal from "@/redux/slices/chat";
+import notification from "@/redux/slices/notification";
 
 const rootReducer = combineReducers({
   modal: modal,
   loading: loading,
   chatModal: chatModal,
+  notification: notification,
   [AuthenticationAPI.reducerPath]: AuthenticationAPI.reducer,
   [PostAPI.reducerPath]: PostAPI.reducer,
   [LikeAPI.reducerPath]: LikeAPI.reducer,

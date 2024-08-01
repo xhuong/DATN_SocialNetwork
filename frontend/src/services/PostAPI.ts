@@ -1,3 +1,4 @@
+import { ESavePostType } from "@/layouts/PostList";
 import { IPostBE } from "@/utils/common";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -7,6 +8,14 @@ export interface IPostsTypes {
   result: {
     data: IPostBE[];
     status: number;
+  };
+}
+
+export interface ISavePostResponseType {
+  status: number;
+  message: string;
+  result: {
+    data: boolean;
   };
 }
 
@@ -34,6 +43,11 @@ export interface IPayloadSearchBookDto {
   max_price?: number;
   author_id?: number;
   publisher_id?: number;
+}
+export interface IPayloadSavePostDto {
+  post_id: number;
+  user_id: number;
+  type: ESavePostType;
 }
 
 export interface IPayloadGetPostsDto {
@@ -80,6 +94,20 @@ export const PostAPI = createApi({
         };
       },
     }),
+    savePost: builder.query<ISavePostResponseType, IPayloadSavePostDto>({
+      query: (body) => ({
+        url: `${prefix}/save-post`,
+        body,
+        method: "POST",
+      }),
+      transformResponse: (res: any) => res.result.data,
+    }),
+    getSavedPostsByUserId: builder.query<IPostsTypes, { userId: number }>({
+      query: ({ userId }) => ({
+        url: `${prefix}/get-saved-posts-by-user-id/${userId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -88,4 +116,6 @@ export const {
   useGetPostListByUserIdQuery,
   useLazyGetPostListByUserIdQuery,
   useLazyCreatePostQuery,
+  useLazySavePostQuery,
+  useLazyGetSavedPostsByUserIdQuery,
 } = PostAPI;

@@ -1,10 +1,14 @@
 import React, { useEffect, useState, createContext, useCallback } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { RootState } from "@/redux/store";
 
 import { IPostFE, IUserBE, mapPostListBEToPostListUI } from "@/utils/common";
 
-import { useLazyGetPostListByUserIdQuery } from "@/services/PostAPI";
+import {
+  useLazyGetPostListByUserIdQuery,
+  useLazySavePostQuery,
+} from "@/services/PostAPI";
 
 import { ELikeType, useLazyLikePostQuery } from "@/services/LikeAPI";
 
@@ -21,11 +25,11 @@ import Post from "@/components/Post";
 import FollowCardList from "@/layouts/FollowCardList";
 
 import styles from "./index.module.scss";
-import { toast } from "react-toastify";
 
 export interface IPostListProvider {
   handleLikePost: (userId: number, postId: number, type: ELikeType) => void;
   handleComment: (comment: IAddNewCommentDto) => void;
+  handleSavePost: (postId: number, userId: number, type: ESavePostType) => void;
   userInfo: IUserBE;
   userId: number;
   id_user_viewing: number;
@@ -34,10 +38,16 @@ export interface IPostListProvider {
 export const PostListContext = createContext<IPostListProvider>({
   handleLikePost: (userId: number, postId: number, type: ELikeType) => {},
   handleComment: (comment: IAddNewCommentDto) => {},
+  handleSavePost: (postId: number, userId: number, type: ESavePostType) => {},
   userInfo: defaultUserInfo,
   userId: -1,
   id_user_viewing: -1,
 });
+
+export enum ESavePostType {
+  SAVE = 1,
+  UNSAVE = 0,
+}
 
 function PostList({
   userId,
@@ -58,6 +68,8 @@ function PostList({
   const userInfo: IUserBE | null = getUserInfo();
 
   const [getPostList, { data, isSuccess }] = useLazyGetPostListByUserIdQuery();
+
+  const [savePost, { isSuccess: isSuccessSavePost }] = useLazySavePostQuery();
 
   const [likePost] = useLazyLikePostQuery();
 
@@ -99,6 +111,37 @@ function PostList({
     [userId, userInfo, isInclude]
   );
 
+  const handleSavePost = async (
+    postId: number,
+    userId: number,
+    type: ESavePostType
+  ) => {
+    if (postId && userId) {
+      await savePost({ post_id: postId, user_id: userId, type: type })
+        .then(() => {
+          toast.success(
+            `You have ${type ? "saved" : "unsaved"} post successfully!`,
+            {
+              autoClose: 1000,
+              theme: "light",
+              position: "top-center",
+            }
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      const clonePosts = [...postList];
+      const postIndex = clonePosts.findIndex((post) => post?.id === postId);
+      if (type === ESavePostType.SAVE) {
+        clonePosts[postIndex].isSavedPost = true;
+      } else if (type === ESavePostType.UNSAVE) {
+        clonePosts[postIndex].isSavedPost = false;
+      }
+      setPostList(clonePosts);
+    }
+  };
+
   const onCreatePostSuccess = useCallback(() => {
     toast.error("Create a new post successfully ✨", {
       autoClose: 2000,
@@ -131,6 +174,7 @@ function PostList({
   const defaultValue = {
     handleLikePost,
     handleComment,
+    handleSavePost,
     userInfo,
     id_user_viewing,
     userId,
@@ -148,7 +192,11 @@ function PostList({
         {postList?.map((post) => {
           return (
             <React.Fragment key={post.id}>
-              <Post post={post} avatar={userInfo.image_profile} />
+              <Post
+                post={post}
+                avatar={userInfo.image_profile}
+                currentUserId={userInfo.id}
+              />
             </React.Fragment>
           );
         })}

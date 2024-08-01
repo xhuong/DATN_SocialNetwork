@@ -106,6 +106,21 @@
           cursor: pointer;
           background-color: var(--gray-light-color);
         }
+        .headerProfileItemCount {
+          position: absolute;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          // padding: 20px;
+          font-size: 1.4rem;
+          border-radius: 50%;
+          background-color: red;
+          color: #fff;
+          right: calc(100% - 10px);
+          top: -4px;
+        }
         .headerCard {
           position: absolute;
           top: calc(100% + 8px);
