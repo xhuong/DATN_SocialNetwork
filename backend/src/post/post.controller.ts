@@ -13,6 +13,7 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { Response } from "express";
 import { GetPostsDto } from "./dto/get-posts.dto";
+import { SavePostDto } from "./dto/save-post.dto";
 
 @Controller("post")
 export class PostController {
@@ -21,6 +22,11 @@ export class PostController {
   @Post()
   create(@Body() createPostDto: CreatePostDto, @Res() response: Response) {
     return this.postService.create(createPostDto, response);
+  }
+
+  @Post("/save-post")
+  savePost(@Body() savePostDto: SavePostDto, @Res() response: Response) {
+    return this.postService.savePost(savePostDto, response);
   }
 
   @Get()
@@ -39,6 +45,11 @@ export class PostController {
     @Res() response: Response,
   ) {
     return this.postService.getPostsByUserId(getPostsDto, response);
+  }
+
+  @Get("/get-saved-posts-by-user-id/:id")
+  getSavedPostsByUserId(@Param("id") id: string, @Res() response: Response) {
+    return this.postService.getSavedPostsByUserId(+id, response);
   }
 
   @Get("/get-all-post-user-liked/:id")

@@ -39,28 +39,30 @@ model User {
   conversation1 Conversation[] @relation("first_user_conversations")
   conversation2 Conversation[] @relation("second_user_conversations")
   Image         Images[]
+  SavedPost     SavedPost[]
 }
 
 model Post {
-  id           Int       @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   title        String
   user_id      Int
-  created_date DateTime  @default(now())
-  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  created_date DateTime    @default(now())
+  user         User        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Images       Images[]
   Like         Like[]
   Comment      Comment[]
-  isLiked      Boolean   @default(false)
+  isLiked      Boolean     @default(false)
   feeling      String?
+  SavedPost    SavedPost[]
 }
 
 model Images {
   id        Int    @id @default(autoincrement())
   image_url String
   post_id   Int?
-  post      Post?   @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  post      Post?  @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user_id   Int?
-  user      User?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User?  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Follower {
@@ -110,4 +112,12 @@ model Message {
   send_datetime   DateTime
   conversation_id Int
   Conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model SavedPost {
+  id      Int  @id @default(autoincrement())
+  post_id Int
+  Post    Post @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id Int
+  User    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

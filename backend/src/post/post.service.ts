@@ -3,9 +3,8 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Response } from "express";
-import { buildNestedComments } from "src/utils";
 import { GetPostsDto } from "./dto/get-posts.dto";
-import { userInfo } from "os";
+import { EsavePostType, SavePostDto } from "./dto/save-post.dto";
 
 @Injectable()
 export class PostService {
@@ -28,6 +27,75 @@ export class PostService {
         status: 400,
         message: "Create a new post failed",
       };
+    }
+  }
+
+  async savePost(savePostDto: SavePostDto, response: Response) {
+    const { post_id, user_id, type } = savePostDto;
+
+    switch (type) {
+      case EsavePostType.SAVE:
+        try {
+          const isSavedPostYet = await this.prisma.savedPost.findFirst({
+            where: {
+              post_id: post_id,
+              user_id: user_id,
+            },
+          });
+          if (!!!isSavedPostYet?.id) {
+            const data = await this.prisma.savedPost.create({
+              data: {
+                post_id,
+                user_id,
+              },
+            });
+            if (data) {
+              return response.status(200).json({
+                status: 200,
+                message: "You have saved post successfully.",
+                result: {
+                  data: true,
+                },
+              });
+            }
+          } else {
+            return response.status(200).json({
+              status: 200,
+              message: "You have saved that post yet.",
+              result: {
+                data: true,
+              },
+            });
+          }
+        } catch (error) {
+          return response.status(400).json({
+            status: 400,
+            message: error,
+          });
+        }
+        break;
+      case EsavePostType.UNSAVE:
+        try {
+          await this.prisma.savedPost.deleteMany({
+            where: {
+              post_id,
+              user_id,
+            },
+          });
+          return response.status(200).json({
+            status: 200,
+            message: "You have unsaved that post successfully",
+            result: {
+              data: true,
+            },
+          });
+        } catch (error) {
+          return response.status(400).json({
+            status: 400,
+            message: error,
+          });
+        }
+        break;
     }
   }
 
@@ -297,6 +365,7 @@ export class PostService {
                 },
               },
             },
+            SavedPost: true,
           },
         });
         posts = data;
@@ -348,15 +417,21 @@ export class PostService {
                 },
               },
             },
+            SavedPost: true,
           },
         });
         posts = data;
       }
 
-      // kiểm tra xem tôi đã like bài viết đó hay chưa
-      const clonePosts = posts.map((post) => ({
+      // kiểm tra xem tôi đã like, save bài viết đó hay chưa
+      const clonePosts = posts.map(({ SavedPost, ...post }) => ({
         ...post,
-        isLiked: post?.Like.some((like) => like.user_id === id_user_viewing),
+        isLiked: post?.Like.some(
+          (like: any) => like.user_id === id_user_viewing,
+        ),
+        isSavedPost: SavedPost.some(
+          (user: any) => user.user_id === id_user_viewing,
+        ),
       }));
 
       return res.status(200).json({
@@ -370,6 +445,70 @@ export class PostService {
       return {
         status: 400,
         message: `Get all posts with userId = ${getPostDto.id_user} failed`,
+      };
+    }
+  }
+
+  async getSavedPostsByUserId(user_id: number, res: Response) {
+    try {
+      const selectUser = {
+        id: true,
+        name: true,
+        address: true,
+        image_profile: true,
+      };
+
+      const posts = await this.prisma.post.findMany({
+        where: {
+          SavedPost: {
+            some: {
+              user_id: {
+                equals: user_id,
+              },
+            },
+          },
+        },
+        orderBy: { created_date: "desc" },
+        include: {
+          user: {
+            select: selectUser,
+          },
+          Comment: {
+            include: {
+              user: {
+                select: selectUser,
+              },
+            },
+          },
+          Images: true,
+          Like: {
+            include: {
+              user: {
+                select: selectUser,
+              },
+            },
+          },
+          SavedPost: true,
+        },
+      });
+
+      const clonePosts = [...posts].map(({ SavedPost, ...post }) => ({
+        ...post,
+        isLiked: post.Like.some((like) => like.user_id === user_id),
+        isSavedPost: true,
+      }));
+
+      return res.status(200).json({
+        status: 200,
+        message: `Get saved posts with userId = ${user_id} successfully`,
+        result: {
+          data: clonePosts,
+        },
+      });
+    } catch (error) {
+      return {
+        status: 400,
+        message: `Get saved posts with userId = ${user_id} failed`,
       };
     }
   }
