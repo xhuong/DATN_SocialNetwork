@@ -9,9 +9,7 @@ const socket = io(URL, { autoConnect: false });
 const userInfo = getUserInfo();
 
 socket.onAny((event, ...args) => {
-  console.log("event", event, ...args);
   if (args[0]?.receivedUserId === userInfo.id) {
-    console.log("OK");
     store.dispatch(increaseCount());
   }
 });

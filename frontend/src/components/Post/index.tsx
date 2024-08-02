@@ -2,14 +2,18 @@ import { createContext, useContext, useState } from "react";
 import { Button as AntButton, Col, Row } from "antd";
 
 import { ICommentFE, IPostFE, calculateTime } from "@/utils/common";
+import { detechMediaType } from "@/utils";
 
 import CommentInput from "@/components/CommentInput";
 import PostComments from "@/components/PostComments";
 
-import { BiLike, BiSolidLike } from "react-icons/bi";
-import { FaRegComment } from "react-icons/fa6";
-import { RiShareForwardLine } from "react-icons/ri";
-import { IoEarth } from "react-icons/io5";
+import {
+  BiLike,
+  BiSolidLike,
+  FaRegComment,
+  IoEarth,
+  RiShareForwardLine,
+} from "./constant";
 
 import {
   ESavePostType,
@@ -20,6 +24,7 @@ import {
 import { ELikeType } from "@/services/LikeAPI";
 
 import styles from "./index.module.scss";
+import { BookMarkBorderSvg, BookMarkSvg } from "@/assets/icons";
 
 export interface IPostProvider {
   replyComment: any;
@@ -105,18 +110,7 @@ function Post({
                   handleSavePost(id, currentUserId, ESavePostType.UNSAVE)
                 }
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="size-3"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <BookMarkSvg />
               </AntButton>
             ) : (
               <AntButton
@@ -127,20 +121,7 @@ function Post({
                   handleSavePost(id, currentUserId, ESavePostType.SAVE)
                 }
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-3"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                  />
-                </svg>
+                <BookMarkBorderSvg />
               </AntButton>
             )}
           </div>
@@ -148,32 +129,59 @@ function Post({
         <div className={styles.postBody}>
           <p className={styles.postTitle}>{title}</p>
           {/* user upload 4 image  */}
-          {images.length > 1 && (
-            <Row gutter={[8, 8]} className={styles.postImages}>
-              {images.map((image) => (
-                <Col xs={12}>
-                  <div className={styles.postImageItem}>
-                    <img src={image.image_url} alt="" />
-                  </div>
-                </Col>
-              ))}
-            </Row>
-          )}
+
+          {images?.length > 1 &&
+            detechMediaType(images[0]?.image_url) === "img" &&
+            images.length > 1 && (
+              <Row gutter={[8, 8]} className={styles.postImages}>
+                {images.map((image) => (
+                  <Col xs={12}>
+                    <div className={styles.postImageItem}>
+                      <img src={image.image_url} alt="" />
+                    </div>
+                  </Col>
+                ))}
+              </Row>
+            )}
 
           {/* user upload 1 image  */}
-          {images.length === 1 && (
-            <Row
-              gutter={[8, 8]}
-              className={styles.postImages}
-              key={images[0].id}
-            >
-              <Col xl={24} md={12}>
-                <div className={styles.postImageItem}>
-                  <img src={images[0].image_url} alt="" />
-                </div>
-              </Col>
-            </Row>
-          )}
+          {images.length === 1 &&
+            detechMediaType(images[0]?.image_url) === "img" && (
+              <Row
+                gutter={[8, 8]}
+                className={styles.postImages}
+                key={images[0].id}
+              >
+                <Col xl={24} md={12}>
+                  <div className={styles.postImageItem}>
+                    <img src={images[0].image_url} alt="" />
+                  </div>
+                </Col>
+              </Row>
+            )}
+
+          {/* user upload 1 video  */}
+          {images?.length > 0 &&
+            detechMediaType(images[0]?.image_url) === "video" && (
+              <Row
+                gutter={[8, 8]}
+                className={styles.postImages}
+                key={images[0].id}
+              >
+                <Col xl={24} md={12}>
+                  <div className={styles.postImageItem}>
+                    <video
+                      width={"100%"}
+                      height={"100%"}
+                      controls
+                      style={{ objectFit: "cover", objectPosition: "center" }}
+                    >
+                      <source src={images[0]?.image_url} />
+                    </video>
+                  </div>
+                </Col>
+              </Row>
+            )}
         </div>
         <div className={styles.postFooter}>
           <div className={styles.postFooterInfo}>

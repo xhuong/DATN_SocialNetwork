@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Col, Form, Input, Modal, Row, Select } from "antd";
 
@@ -32,16 +32,28 @@ interface ICreatePostFormValue {
 }
 
 function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
+  const [disableBtns, setDisabledBtns] = useState({
+    disabledChooseImageBtn: false,
+    disabledChooseVideoBtn: false,
+  });
+
   const [createPost] = useLazyCreatePostQuery();
   const [uploadImage] = useLazyUploadImagesQuery();
   const userInfo = getUserInfo();
   const dispatch = useDispatch();
 
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedImageFiles, setSelectedImageFiles] = useState([]); // image files
   const [previewImgs, setPreviewImgs] = useState<string[]>([]);
 
-  const handleFileChange = (e: any) => {
-    setSelectedFiles(e.target.files);
+  const [selectedVideoFile, setSelectedVideoFile] = useState([]); // videos files
+  const [previewVideo, setPreviewVideo] = useState<string[]>([]);
+
+  const handleImageFileChange = (e: any) => {
+    setSelectedImageFiles(e.target.files);
+    setDisabledBtns((prev) => ({
+      ...prev,
+      disabledChooseVideoBtn: e.target?.files?.length,
+    }));
     if (e.target.files) {
       const filePreviews: string[] = [];
       Array.from(e.target.files).forEach((file: any) => {
@@ -59,14 +71,62 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
     }
   };
 
-  const handleUploadFile = async (post_id: number) => {
-    for (let i = 0; i < selectedFiles.length; i++) {
+  const handleVideoFileChange = (e: any) => {
+    setSelectedVideoFile(e.target.files);
+    setDisabledBtns((prev) => ({
+      ...prev,
+      disabledChooseImageBtn: e.target?.files?.length,
+    }));
+    if (e.target.files) {
+      const filePreviews: string[] = [];
+      Array.from(e.target.files).forEach((file: any) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          if (reader.result) {
+            filePreviews.push(reader.result as string);
+            if (filePreviews.length === e.target.files.length) {
+              setPreviewVideo(filePreviews);
+            }
+          }
+        };
+      });
+    }
+  };
+
+  const handleUploadImageFiles = async (post_id: number) => {
+    for (let i = 0; i < selectedImageFiles.length; i++) {
       const formData = new FormData();
-      formData.append("file", selectedFiles[i]);
+      formData.append("file", selectedImageFiles[i]);
       formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
       try {
         const response: any = await fetch(
           `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+          {
+            body: formData,
+            method: "POST",
+          }
+        ).then((res) => res.json());
+
+        const payload = {
+          image_url: response.url,
+          post_id: post_id,
+        };
+        await uploadImage([payload]);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+  };
+
+  const handleUploadVideoFile = async (post_id: number) => {
+    for (let i = 0; i < selectedVideoFile.length; i++) {
+      const formData = new FormData();
+      formData.append("file", selectedVideoFile[i]);
+      formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+      try {
+        const response: any = await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
           {
             body: formData,
             method: "POST",
@@ -94,9 +154,17 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
           feeling: value.emotion,
         });
 
-        await handleUploadFile(postRes?.data?.result?.data?.id).then(() =>
-          onSuccess()
-        );
+        if (selectedVideoFile?.length > 0) {
+          await handleUploadVideoFile(postRes?.data?.result?.data?.id).then(
+            () => {
+              onSuccess();
+            }
+          );
+        } else if (selectedImageFiles?.length > 0) {
+          await handleUploadImageFiles(postRes?.data?.result?.data?.id).then(
+            () => onSuccess()
+          );
+        }
       } catch (error) {
         toast.error("Error when create your post!", {
           autoClose: 2000,
@@ -104,17 +172,29 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
         });
       } finally {
         dispatch(hideLoading());
-        dispatch(closeModal());
+        onHideModal();
       }
     } else {
-      dispatch(closeModal());
+      onHideModal();
     }
   };
 
   const onHideModal = () => {
     dispatch(closeModal());
     setPreviewImgs([]);
+    setDisabledBtns({
+      disabledChooseImageBtn: false,
+      disabledChooseVideoBtn: false,
+    });
+    setPreviewVideo([]);
+    setSelectedImageFiles([]);
+    setSelectedVideoFile([]);
   };
+
+  useEffect(() => {
+    !!!selectedImageFiles?.length && setPreviewImgs([]);
+    !!!selectedVideoFile?.length && setPreviewVideo([]);
+  }, [selectedImageFiles, selectedVideoFile]);
 
   return (
     <Modal
@@ -133,7 +213,7 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
       <Form layout="vertical" onFinish={handleSubmitPost}>
         <Form.Item name="emotion">
           <Select
-            style={{ width: "50%" }}
+            style={{ width: "100%" }}
             options={[...EMOTIONS]}
             placeholder="How do you feeling?"
           />
@@ -166,12 +246,89 @@ function CreatePostModal({ isShow, onSuccess }: ICreatePostModalPropsType) {
           </Row>
         )}
 
+        {previewVideo.length > 0 && (
+          <div
+            style={{
+              height: "200px",
+              marginBottom: "4px",
+              borderRadius: "8px",
+              overflow: "hidden",
+            }}
+          >
+            <video
+              width={"100%"}
+              height={"100%"}
+              controls
+              style={{ objectFit: "cover", objectPosition: "center" }}
+            >
+              <source src={previewVideo[0]} />
+            </video>
+          </div>
+        )}
+
         <div className="uploadImage">
+          <label
+            htmlFor="input-imgs"
+            style={{
+              fontSize: "1.6rem",
+              width: "100%",
+              borderRadius: "4px",
+              display: "inline-block",
+              textAlign: "center",
+              color: "#ffffff",
+              padding: "6px 0",
+              backgroundColor: `${
+                disableBtns.disabledChooseImageBtn
+                  ? "#d3d3d3"
+                  : "var(--purple-color)"
+              }`,
+              cursor: `${
+                disableBtns.disabledChooseImageBtn ? "not-allowed" : "pointer"
+              }`,
+            }}
+          >
+            Select images
+          </label>
           <input
+            style={{ visibility: "hidden", height: "4px" }}
+            id="input-imgs"
+            disabled={disableBtns.disabledChooseImageBtn}
             type="file"
             accept="image/*"
             multiple
-            onChange={handleFileChange}
+            onChange={handleImageFileChange}
+          />
+        </div>
+        <div className="uploadVideo">
+          <label
+            htmlFor="input-video"
+            style={{
+              fontSize: "1.6rem",
+              width: "100%",
+              borderRadius: "4px",
+              border: "1px solid #000",
+              display: "inline-block",
+              textAlign: "center",
+              color: "#000000",
+              padding: "6px 0",
+              backgroundColor: `${
+                disableBtns.disabledChooseVideoBtn ? "#d3d3d3" : "#ffffff"
+              }`,
+              cursor: `${
+                disableBtns.disabledChooseVideoBtn ? "not-allowed" : "pointer"
+              }`,
+            }}
+          >
+            Select video
+          </label>
+          <input
+            style={{ visibility: "hidden", height: "4px" }}
+            id="input-video"
+            disabled={disableBtns.disabledChooseVideoBtn}
+            type="file"
+            accept="video/*"
+            multiple
+            onChange={handleVideoFileChange}
           />
         </div>
         <Button
