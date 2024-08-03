@@ -132,15 +132,14 @@ export class PostService {
         orderBy: { created_date: "desc" },
         select: { id: true, title: true },
       });
-      if (posts) {
-        return response.status(200).json({
-          status: 200,
-          message: "Get latest liked post successfully",
-          result: {
-            data: posts,
-          },
-        });
-      }
+
+      return response.status(200).json({
+        status: 200,
+        message: "Get latest liked post successfully",
+        result: {
+          data: posts ?? [],
+        },
+      });
     } catch (error) {
       return response.status(400).json({
         status: 400,

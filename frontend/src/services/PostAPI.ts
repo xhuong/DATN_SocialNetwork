@@ -108,6 +108,14 @@ export const PostAPI = createApi({
         method: "GET",
       }),
     }),
+    getNotLikedPostsByUserId: builder.query<IPostsTypes, { userId: number }>({
+      query: ({ userId }) => {
+        return {
+          url: `${prefix}/get-all-post-user-not-liked/${userId}`,
+          method: "GET",
+        };
+      },
+    }),
   }),
 });
 
@@ -118,4 +126,5 @@ export const {
   useLazyCreatePostQuery,
   useLazySavePostQuery,
   useLazyGetSavedPostsByUserIdQuery,
+  useLazyGetNotLikedPostsByUserIdQuery,
 } = PostAPI;

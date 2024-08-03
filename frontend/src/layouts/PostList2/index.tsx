@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import { IPostFE, IUserBE, mapPostListBEToPostListUI } from "@/utils/common";
 
 import {
+  useLazyGetLatestLikedPostQuery,
+  useLazyGetNotLikedPostsByUserIdQuery,
   useLazyGetPostListByUserIdQuery,
   useLazyGetSavedPostsByUserIdQuery,
   useLazySavePostQuery,
@@ -20,6 +22,10 @@ import Post2 from "@/components/Post2";
 
 import styles from "./index.module.scss";
 import { Alert } from "antd";
+import {
+  PostDto,
+  useLazyGetRecommendPostsQuery,
+} from "@/services/RecommendAPI";
 
 export interface IPostList2Provider {
   handleLikePost: (userId: number, postId: number, type: ELikeType) => void;
@@ -49,9 +55,11 @@ export enum ESavePostType {
 function PostList2({
   idUser,
   isGetSavedPost,
+  isGetRecommendPost,
 }: {
   idUser: number;
-  isGetSavedPost: boolean;
+  isGetSavedPost?: boolean;
+  isGetRecommendPost?: boolean;
 }) {
   // {
   //   userId,
@@ -70,6 +78,18 @@ function PostList2({
 
   const [getSavedPosts, { data, isSuccess }] =
     useLazyGetSavedPostsByUserIdQuery();
+  const [
+    getRecommentPosts,
+    { data: recommendPostsData, isSuccess: isGetRecommendPostsSuccess },
+  ] = useLazyGetRecommendPostsQuery();
+  const [
+    getLatestLikedPost,
+    { data: latestLikedPostData, isSuccess: isGetLatestLikedPostSuccess },
+  ] = useLazyGetLatestLikedPostQuery();
+  const [
+    getNotLikedPosts,
+    { data: notLikedPostsData, isSuccess: isGetNotLikedPostsSuccess },
+  ] = useLazyGetNotLikedPostsByUserIdQuery();
 
   const [savePost, { isSuccess: isSuccessSavePost }] = useLazySavePostQuery();
 
@@ -147,9 +167,38 @@ function PostList2({
     }
   }, [data, isSuccess]);
 
+  const handleGetRecommentPost = async () => {
+    const data: any = await Promise.all([
+      getLatestLikedPost({ id: userInfo.id }),
+      getNotLikedPosts({ userId: userInfo.id }),
+    ])
+      .then(([latestLikedPost, notLikedPosts]) => [
+        latestLikedPost?.data?.result?.data,
+        notLikedPosts?.data?.result?.data,
+      ])
+      .catch((err) => {
+        throw new Error(err);
+      });
+    if (data[0]?.length > 0 && data[1]?.length > 0) {
+      // use data as payload for get recommentPosts API here
+      // todo...
+      getRecommentPosts({
+        current_id_user: userInfo.id,
+        liked_posts: data[0],
+        unliked_posts: data[1],
+      });
+    }
+  };
+
   useEffect(() => {
-    idUser && getSavedPosts({ userId: idUser });
-  }, [idUser]);
+    if (idUser) {
+      if (isGetSavedPost) {
+        getSavedPosts({ userId: idUser });
+      } else if (isGetRecommendPost) {
+        handleGetRecommentPost();
+      }
+    }
+  }, [idUser, isGetSavedPost, isGetRecommendPost]);
 
   const defaultValue = {
     handleLikePost,

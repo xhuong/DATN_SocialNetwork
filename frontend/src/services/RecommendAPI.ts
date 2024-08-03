@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IPostsTypes } from "@/services/PostAPI";
 
-interface PostDto {
+export interface PostDto {
   post_id: number;
   title: string;
 }
